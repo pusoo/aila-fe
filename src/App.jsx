@@ -1,70 +1,71 @@
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { useState } from "react";
-import Note from "./components/Note";
-import ChatBox from "./components/ChatBox";
-import { Button, Flex } from "antd";
-import CreateNoteModal from "./components/CreateNoteModal";
-import { TOKEN } from "./config";
+import { Route, useLocation, Navigate, Routes } from "react-router-dom";
 
-function App() {
-  const [selectedNote, setSelectedNote] = useState(null);
+import Home from "./pages/home";
+import useLocalStorage from "./hooks/useLocalStorage";
+import { TOKEN_KEY } from "./constants";
+import Signin from "./pages/signin";
+import Register from "./pages/register";
+import Notes from "./pages/notes";
+import Media from "./pages/media";
+import Generate from "./pages/generate";
+import Error from "./pages/error";
 
-  const { data: notes } = useQuery({
-    queryKey: ["notes"],
-    queryFn: async () => {
-      const { data } = await axios.get(
-        "http://localhost:3000/v1/notes?limit=1000",
-        {
-          headers: {
-            Authorization: `Bearer ${TOKEN}`,
-          },
-        }
-      );
-      return data.results;
-    },
-  });
+const RequireAuth = ({ children }) => {
+  const location = useLocation();
+  const [tokens] = useLocalStorage(TOKEN_KEY, null);
+  if (!tokens) {
+    return <Navigate to="/signin" state={{ from: location }} replace />;
+  }
+  return children;
+};
 
+const CheckAuth = ({ children }) => {
+  const location = useLocation();
+  const [tokens] = useLocalStorage(TOKEN_KEY, null);
+
+  if (tokens) {
+    return <Navigate to="/notes" state={{ from: location }} replace />;
+  }
+
+  return children;
+};
+
+export default function App() {
   return (
-    <div
-      style={{
-        width: "100vw",
-        height: "100vh",
-        display: "flex",
-        flexDirection: "row",
-      }}
-    >
-      <aside style={{ width: "350px", background: "#fafafa" }}>
-        <CreateNoteModal />
-        <Flex gap="middle" vertical>
-          {(notes || []).map((note) => {
-            return (
-              <Flex key={note._id} vertical>
-                <h4>
-                  {note.title} ({note.type})
-                </h4>
-                <div>
-                  <Button
-                    onClick={() => {
-                      setSelectedNote(note);
-                    }}
-                  >
-                    Select
-                  </Button>
-                </div>
-              </Flex>
-            );
-          })}
-        </Flex>
-      </aside>
-      <main style={{ flex: 1, padding: 10 }}>
-        <Note note={selectedNote} />
-      </main>
-      <aside style={{ width: "350px", background: "#fafafa" }}>
-        <ChatBox note={selectedNote} />
-      </aside>
-    </div>
+    <Routes>
+      <Route
+        element={
+          <RequireAuth>
+            <Home />
+          </RequireAuth>
+        }
+      >
+        <Route path="/notes" element={<Notes />} />
+        <Route path="/" element={<Notes />} />
+        <Route path="/media" element={<Media />} />
+        <Route path="/generate/:noteId" exact element={<Generate />} />
+      </Route>
+
+      <Route
+        path="/signin"
+        exact
+        element={
+          <CheckAuth>
+            <Signin />
+          </CheckAuth>
+        }
+      />
+      <Route
+        path="/register"
+        exact
+        element={
+          <CheckAuth>
+            <Register />
+          </CheckAuth>
+        }
+      />
+
+      <Route path="*" element={<Error />} />
+    </Routes>
   );
 }
-
-export default App;

@@ -1,79 +1,303 @@
+import { Button, Divider, Flex, Modal, message, Typography } from "antd";
+import moment from "moment";
 import YouTube from "react-youtube";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useCallback, useEffect, useState } from "react";
+import { CopyOutlined, EditFilled, RedoOutlined } from "@ant-design/icons";
 
-const Note = ({ note }) => {
-  if (!note) {
+import authAxios from "../api/authAxios";
+import { API_URL } from "../config";
+import useNoteContext from "../hooks/useNoteContext";
+import NotesCategory from "./NotesCategory";
+import Files from "./Files";
+import WarningArea from "./WarningArea";
+
+const Note = () => {
+  const queryClient = useQueryClient();
+  const { setSelectedNote, selectedNote } = useNoteContext();
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
+  const [isSummaryLoading, setIsSummaryLoading] = useState(false);
+
+  const mutation = useMutation({
+    mutationFn: () => {
+      if (!selectedNote._id) return;
+      return authAxios.delete(`${API_URL}/notes/${selectedNote._id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
+    },
+  });
+
+
+  const editMutation = useMutation({
+    mutationFn: (title) => {
+      if (!selectedNote._id) return;
+      return authAxios.patch(`${API_URL}/notes/${selectedNote._id}`, { title });
+    },
+    onSuccess: ({ data }) => {
+      setSelectedNote(data)
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
+    },
+  });
+
+  const { data: response } = useQuery({
+    queryKey: ["notes", selectedNote._id],
+    queryFn: async () => {
+      const { data } = await authAxios.get(
+        `${API_URL}/notes/${selectedNote._id}`
+      );
+      return data;
+    },
+    staleTime: 0,
+    refetchInterval: isComplete === false ? 2000 : false,
+    enabled: isComplete === false,
+  });
+
+  useEffect(() => {
+    if (response && response.status === "success") {
+      setSelectedNote(response)
+      setIsComplete(true);
+    } else {
+      setIsComplete(false);
+      setIsLoading(false);
+    }
+  }, [response, setSelectedNote]);
+
+  const handleDeleteNote = async () => {
+    try {
+      setIsLoading(true);
+      await mutation.mutateAsync();
+      setSelectedNote(null);
+      message.success("Note deleted successfully!");
+    } catch (err) {
+      message.error("Deleting of the note failed!");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDelete = () => {
+    Modal.confirm({
+      title: "Delete note",
+      content: "Are you sure you want to delete this note?",
+      onOk: handleDeleteNote,
+      okButtonProps: {
+        isLoading,
+        disabled: isLoading,
+      },
+      cancelButtonProps: {
+        disabled: isLoading,
+      },
+      footer: (_, { OkBtn, CancelBtn }) => (
+        <>
+          <CancelBtn />
+          <OkBtn />
+        </>
+      ),
+    });
+  };
+
+  const handleSummarize = useCallback(async () => {
+    if (!selectedNote) {
+      return;
+    }
+    try {
+      setIsSummaryLoading(true);
+      const response = await authAxios.get(
+        `${API_URL}/notes/${selectedNote._id}/summarize`
+      );
+      setSelectedNote((prevNote) => ({
+        ...prevNote,
+        summary: response.data.response,
+      }));
+      message.success("The summary was generated successfully.");
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
+    } catch (error) {
+      message.error(
+        "It seems an error occurred while attempting to retrieve the summary"
+      );
+    } finally {
+      setIsSummaryLoading(false);
+    }
+  }, [selectedNote, queryClient, setSelectedNote]);
+
+  if (!selectedNote) {
     return null;
   }
 
-  switch (note.type) {
-    case "pdf":
-      return (
-        <iframe
-          src={note.url}
-          style={{ width: "100%", height: "100%" }}
-        ></iframe>
-      );
-    case "url":
-      return (
-        <iframe
-          src={note.url}
-          style={{ width: "100%", height: "100%" }}
-        ></iframe>
-      );
+  const copyTextToClipboard = async () => {
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(selectedNote.summary);
 
-    case "video":
-      return (
-        <video width="100%" autoPlay={false} controls={true}>
-          <source src={note.url} type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-      );
-    case "audio":
-      return (
-        <audio controls>
-          <source src={note.url} type="audio/mp3" />
-          Your browser does not support the audio element.
-        </audio>
-      );
-    case "text":
-      return <p>{note.transcription}</p>;
-    case "youtube":
-      const params = note.url.split("?")[1];
-      const searchParams = new URLSearchParams(params);
-      const videoId = searchParams.get("v");
-
-      if (!videoId) {
-        return null;
+        return Promise.resolve(true);
       }
+    } catch (error) {
+      console.error('Unable to copy script to clipboard:', error);
+      return Promise.reject(false);
+    }
+  };
 
-      return (
-        // <>
-        //   <iframe
-        //     width="560"
-        //     height="315"
-        //     src="https://www.youtube.com/embed/tgbNymZ7vqY?controls=0"
-        //     title="YouTube video player"
-        //     frameborder="0"
-        //     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        //     allowfullscreen
-        //   ></iframe>
-        // </>
+  const renderMedia = () => {
+    switch (selectedNote.type) {
+      case "pdf":
+        return (
+          <iframe
+            src={selectedNote.url}
+            className="w-full h-96"
+          ></iframe>
+        );
+      case "url":
+        return (
+          <iframe
+            src={selectedNote.url}
+            className="w-full h-96"
+          ></iframe>
+        );
 
-        <YouTube
-          videoId={videoId}
-          opts={{
-            height: "390",
-            width: "640",
-            playerVars: {
-              // https://developers.google.com/youtube/player_parameters
-              autoplay: 1,
-            },
+      case "video":
+        return (
+          <video width="100%" autoPlay={false} controls={true}>
+            <source src={selectedNote.url} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        );
+      case "audio":
+        return (
+          <audio controls>
+            <source src={selectedNote.url} type="audio/mp3" />
+            Your browser does not support the audio element.
+          </audio>
+        );
+      case "text":
+        return null;
+      case "youtube":
+        const params = selectedNote.url.split("?")[1];
+        const searchParams = new URLSearchParams(params);
+        const videoId = searchParams.get("v");
+
+        if (!videoId) {
+          return null;
+        }
+
+        return (
+          // <>
+          //   <iframe
+          //     width="560"
+          //     height="315"
+          //     src="https://www.youtube.com/embed/tgbNymZ7vqY?controls=0"
+          //     title="YouTube video player"
+          //     frameborder="0"
+          //     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          //     allowfullscreen
+          //   ></iframe>
+          // </>
+
+          <YouTube
+            videoId={videoId}
+            opts={{
+              height: "390",
+              width: "100%",
+              playerVars: {
+                // https://developers.google.com/youtube/player_parameters
+                autoplay: 0,
+              },
+            }}
+          />
+        );
+      case "default":
+        return <pre>{JSON.stringify(selectedNote, null, 1)}</pre>;
+    }
+  };
+
+  return (
+    <Flex
+      vertical
+      gap={20}
+      className="max-w-full md:max-w-xl lg:max-w-2xl xl:max-w-3xl mx-auto"
+    >
+      <Flex
+        className="px-8 sm:px-0"
+        style={{ justifyContent: "space-between" }}
+      >
+        <Typography.Title
+          editable={{
+            icon: <EditFilled className="text-slate-700" />,
+            onChange: (e) => editMutation.mutateAsync(e),
+            text: selectedNote.title,
+
           }}
-        />
-      );
-    case "default":
-      return <pre>{JSON.stringify(note, null, 1)}</pre>;
-  }
+          level={4}
+        >
+          {selectedNote.title}
+        </Typography.Title>
+      </Flex>
+      <Flex className="px-8 sm:px-0" vertical gap={8}>
+        <Typography.Text className="text-gray-400">
+          Date: {moment(selectedNote.createdAt).format("MMM DD, YYYY")}
+        </Typography.Text>
+      </Flex>
+      <NotesCategory />
+      {selectedNote.type !== "text" && (
+        <>
+          <Divider style={{ margin: 0 }} />
+          <Typography.Title level={5}>Media:</Typography.Title>
+        </>
+      )}
+      <div>
+        {renderMedia()}
+      </div>
+
+      <Divider style={{ margin: 0 }} />
+      {!isComplete && response && <p>The note is still processing..</p>}
+      {isSummaryLoading ? (
+        <p>Summary is still processing..</p>
+      ) : (
+        selectedNote.summary && (
+          <>
+            <Typography.Title level={5}>Summary:</Typography.Title>
+            <Flex className="bg-white rounded p-5">
+              <div className="flex-1">
+                <p>{selectedNote.summary}</p>
+              </div>
+              <Flex vertical className="gap-1">
+                <Button type="text">
+                  <CopyOutlined onClick={copyTextToClipboard} />
+                </Button>
+                <Button type="text" onClick={() => {
+                  if (selectedNote.summary) {
+                    Modal.confirm({
+                      title: "Summarize notes",
+                      content:
+                        "Are you certain of your intention to re-summarize your transcription? This action will result in the loss of the current summary.",
+                      onOk: handleSummarize,
+                      footer: (_, { OkBtn, CancelBtn }) => (
+                        <>
+                          <CancelBtn />
+                          <OkBtn />
+                        </>
+                      ),
+                    });
+                    return;
+                  }
+                  handleSummarize();
+                }}>
+                  <RedoOutlined />
+                </Button>
+              </Flex>
+            </Flex>
+          </>
+        )
+      )}
+      <Files />
+      <WarningArea
+        transcription={(response && response.transcription) || ""}
+        onDelete={handleDelete}
+      />
+    </Flex>
+  );
 };
 
 export default Note;

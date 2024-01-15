@@ -1,0 +1,59 @@
+import { Drawer } from "antd";
+import { useWindowSize } from "../hooks/useWindowSize";
+
+const Sidebar = ({
+  showTab,
+  children,
+  width,
+  toggleTab,
+  position = "left",
+}) => {
+  const { width: screenWidth } = useWindowSize();
+
+  if (screenWidth < 640) {
+    return (
+      <Drawer
+        className="block sm:hidden"
+        placement={position}
+        closable={false}
+        onClose={toggleTab}
+        open={showTab}
+        width={position === "bottom" ? "100%" : width}
+        height={position === "bottom" ? "100%" : "unset"}
+        closeIcon={null}
+      >
+        {children}
+      </Drawer>
+    );
+  } else {
+    return (
+      <div
+        className="hidden sm:block flex-shrink-0 overflow-x-hidden bg-white transition-all"
+        style={{
+          width: showTab ? width : "0px",
+          visibility: showTab ? "visible" : "invisible",
+        }}
+      >
+        <div className="h-full" style={{ width: width }}>
+          <div className="flex h-full min-h-0 flex-col">
+            <div
+              className={`flex h-full min-h-0 flex-col transition-opacity ${
+                showTab ? "opacity-100" : "opacity-50"
+              }`}
+            >
+              <div className="relative h-full w-full flex-1 items-start border-white/20">
+                <nav className="flex h-full w-full flex-col">
+                  <div className="flex-col flex-1 transition-opacity duration-500 -mr-2 pr-2 overflow-y-auto">
+                    {children}
+                  </div>
+                </nav>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+};
+
+export default Sidebar;

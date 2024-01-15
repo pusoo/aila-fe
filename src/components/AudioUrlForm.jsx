@@ -1,25 +1,21 @@
 import { Button, Flex, Input } from "antd";
 import { useState } from "react";
-import { TOKEN } from "../config";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+
+import authAxios from "../api/authAxios";
+import { API_URL } from "../config";
 
 const AudioUrlForm = () => {
   const [url, setUrl] = useState("");
 
   const mutation = useMutation({
     mutationFn: (url) => {
-      return axios.post(
-        "http://localhost:3000/v1/notes/audio",
+      return authAxios.post(
+        `${API_URL}/notes/audio`,
         {
           title: (+new Date()).toString(),
           url,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${TOKEN}`,
-          },
-        }
       );
     },
   });

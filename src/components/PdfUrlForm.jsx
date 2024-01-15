@@ -1,26 +1,29 @@
 import { Button, Flex, Input } from "antd";
 import { useState } from "react";
-import { TOKEN } from "../config";
-import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+import { API_URL } from "../config";
+import authAxios from "../api/authAxios";
+import useNoteContext from "../pages/notes/hooks/useNoteContext";
 
 const PdfUrlForm = () => {
   const [url, setUrl] = useState("");
+  const queryClient = useQueryClient();
+  const { setSelectedNote } = useNoteContext()
 
   const mutation = useMutation({
     mutationFn: (url) => {
-      return axios.post(
-        "http://localhost:3000/v1/notes/pdf",
+      return authAxios.post(
+        `${API_URL}/notes/pdf`,
         {
           title: (+new Date()).toString(),
           url,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${TOKEN}`,
-          },
-        }
       );
+    },
+    onSuccess: ({ data }) => {
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
+      setSelectedNote(data)
     },
   });
 
