@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { Button, Flex, Form, Input, Modal, message } from "antd";
+import { Button, Flex, Form, Input, message } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
@@ -9,12 +9,12 @@ import useLocalStorage from "../../hooks/useLocalStorage";
 import { TOKEN_KEY } from "../../constants";
 import { API_URL } from "../../config";
 
-import Onboarding from "../../components/OnBoarding";
+// import Onboarding from "../../components/OnBoarding";
 
 const Signin = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [onBoardingModalIsOpen, setOnBoardingModalIsOpen] = useState(true);
+  // const [onBoardingModalIsOpen, setOnBoardingModalIsOpen] = useState(true);
 
   const [_, setTokens] = useLocalStorage(TOKEN_KEY, null);
 
@@ -43,9 +43,9 @@ const Signin = () => {
     }
   }, [mutation.isSuccess, mutation.data, setTokens, navigate]);
 
-  const handleCancel = () => {
-    setOnBoardingModalIsOpen(false);
-  };
+  // const handleCancel = () => {
+  //   setOnBoardingModalIsOpen(false);
+  // };
   return (
     <Flex
       style={{
@@ -56,7 +56,7 @@ const Signin = () => {
       }}
       className="bg-primary"
     >
-      <Modal
+      {/* <Modal
         open={false}
         title=""
         onCancel={handleCancel}
@@ -64,7 +64,7 @@ const Signin = () => {
         className="!w-[494px]"
       >
         <Onboarding handleClose={handleCancel} />
-      </Modal>
+      </Modal> */}
 
       <div className="flex flex-col gap-5 sm:rounded-xl bg-neutral-100   md:m-0 w-screen h-screen sm:w-[24.375rem] sm:h-[36.25rem] relative px-9 py-12">
         {/* header */}
