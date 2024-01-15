@@ -23,7 +23,7 @@ const UploadModal = () => {
     }
     setImage(file)
     const { data } = await authAxios.get(
-      `http://localhost:3000/v1/uploads/s3-signed-url?fileName=${file.name}&fileType=${file.type}`
+      `${API_URL}/uploads/s3-signed-url?fileName=${file.name}&fileType=${file.type}`
     );
     if (data && data.uploadUrl && data.fileUrl) {
       await axios.put(data.uploadUrl, file)

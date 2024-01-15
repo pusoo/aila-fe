@@ -45,7 +45,7 @@ const UploadForm = ({ type = "pdf", closeModal = () => { } }) => {
     setLoading(true);
     try {
       const { data } = await authAxios.get(
-        `http://localhost:3000/v1/uploads/s3-signed-url?fileName=${file.name}&fileType=${file.type}`
+        `${API_URL}/uploads/s3-signed-url?fileName=${file.name}&fileType=${file.type}`
       );
 
       const { signedRequest, url } = data;
