@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Button, Modal } from "antd";
+import { useWindowSize } from "../hooks/useWindowSize";
+import { Flex, Button, Modal, Drawer, Typography, Menu } from "antd";
 import {
   FilePdfOutlined,
   VideoCameraOutlined,
@@ -7,9 +8,9 @@ import {
   YoutubeOutlined,
   FontSizeOutlined,
   GlobalOutlined,
-  PlusOutlined,
+  FormOutlined,
 } from "@ant-design/icons";
-
+const { Text } = Typography;
 import YoutubeUrlForm from "./YoutubeUrlForm";
 import TextForm from "./TextForm";
 import UrlForm from "./UrlForm";
@@ -17,34 +18,38 @@ import UploadForm from "./UploadForm";
 
 function CreateNoteModal() {
   const [openModal, setOpenModal] = useState(false);
+  const [openChildrenDrawer, setChildrenDrawer] = useState(false);
+  const [selectedType, setSelectedType] = useState(null);
+  const { width: screenWidth } = useWindowSize();
+
   const showModal = () => setOpenModal(true);
   const hideModal = () => setOpenModal(false);
-
-  const [selectedType, setSelectedType] = useState(null);
+  const showChildrenDrawer = () => setChildrenDrawer(true);
+  const hideChildrenDrawer = () => setChildrenDrawer(false);
 
   const noteTypes = [
     {
-      name: "pdf",
+      name: "PDF",
       Icon: FilePdfOutlined,
     },
     {
-      name: "video",
+      name: "Video",
       Icon: VideoCameraOutlined,
     },
     {
-      name: "audio",
+      name: "Audio",
       Icon: AudioOutlined,
     },
     {
-      name: "youtube",
+      name: "Youtube",
       Icon: YoutubeOutlined,
     },
     {
-      name: "url",
+      name: "URL",
       Icon: GlobalOutlined,
     },
     {
-      name: "text",
+      name: "Text",
       Icon: FontSizeOutlined,
     },
   ];
@@ -52,116 +57,227 @@ function CreateNoteModal() {
   return (
     <>
       <Button
-        type="primary"
-        block
+        className="flex flex-1 items-center w-full h-full max-w-96 rounded-xl py-4 px-5 border-solid border-2 !bg-transparent border-tertiary hover:!border-[#359EDD] sm:w-full"
         onClick={showModal}
-        icon={<PlusOutlined />}
-        className="bg-blue-400 h-12 sm:h-9 !w-full rounded-xl"
       >
-        Create Note
+        <Flex gap={15}>
+          <FormOutlined className="text-primary text-xl" />
+          <Flex vertical className="text-left">
+            <Text strong>Create Note</Text>
+            <Text type="secondary">Start your notes on a blank page</Text>
+          </Flex>
+        </Flex>
       </Button>
-      <Modal
-        title="Create Note"
-        open={openModal}
-        onCancel={hideModal}
-        footer={null}
-        header={<h2>M</h2>}
-      >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 8,
-          }}
+      {screenWidth < 640 ? (
+        <Drawer
+          open={openModal}
+          onClose={hideModal}
+          placement="bottom"
+          className="rounded-t-2xl"
+          height="fit-content"
         >
-          <p style={{ marginBottom: 8 }}>Please select the type of content:</p>
           <div
             style={{
               display: "flex",
-              flexDirection: "row",
+              flexDirection: "column",
               gap: 8,
             }}
           >
-            {noteTypes.map(({ name, Icon }) => {
-              return (
-                <Button
-                  key={name}
-                  style={{
-                    borderColor:
-                      name === selectedType
-                        ? "rgba(61, 142, 242, 0.992)"
-                        : "rgba(0, 0, 0, 0.88)",
-                  }}
-                  onClick={() => setSelectedType(name)}
-                >
-                  <span
+            <p style={{ marginBottom: 8 }}>
+              Please select the type of content:
+            </p>
+            <Menu>
+              {noteTypes.map(({ name, Icon }) => {
+                return (
+                  <Menu.Item
+                    key={name}
                     style={{
-                      fontSize: 16,
+                      borderColor:
+                        name === selectedType
+                          ? "rgba(61, 142, 242, 0.992)"
+                          : "#8C8F92",
+                      display: "flex",
+                      alignItems: "center",
+                      width: "100%",
+                      gap: "10px",
+                      padding: "5px",
+                    }}
+                    onClick={() => {
+                      setSelectedType(name);
+                      showChildrenDrawer();
                     }}
                   >
-                    <Icon
+                    <span className="flex items-center gap-1">
+                      <Icon
+                        style={{
+                          color:
+                            name === selectedType
+                              ? "rgba(61, 142, 242, 0.992)"
+                              : "#8C8F92",
+                          fontSize: "16px",
+                          backgroundColor: "#F2F8F7",
+                          borderRadius: "50%",
+                          padding: "10px",
+                        }}
+                      />
+                      <span className="text-base">{name}</span>
+                    </span>
+                  </Menu.Item>
+                );
+              })}
+            </Menu>
+            {/* <UploadImageForm /> */}
+          </div>
+          <Drawer
+            open={openChildrenDrawer}
+            onClose={hideChildrenDrawer}
+            closable={false}
+            placement="bottom"
+            height="fit-content"
+          >
+            {selectedType === "PDF" && (
+              <UploadForm
+                type="pdf"
+                closeModal={() => {
+                  setOpenModal(false);
+                }}
+              />
+            )}
+            {selectedType === "Video" && (
+              <UploadForm
+                type="video"
+                closeModal={() => {
+                  setOpenModal(false);
+                }}
+              />
+            )}
+            {selectedType === "Audio" && (
+              <UploadForm
+                type="audio"
+                closeModal={() => {
+                  setOpenModal(false);
+                }}
+              />
+            )}
+            {selectedType === "Youtube" && (
+              <YoutubeUrlForm
+                closeModal={() => {
+                  setOpenModal(false);
+                }}
+              />
+            )}
+            {selectedType === "Text" && (
+              <TextForm
+                closeModal={() => {
+                  setOpenModal(false);
+                }}
+              />
+            )}
+            {selectedType === "URL" && (
+              <UrlForm
+                closeModal={() => {
+                  setOpenModal(false);
+                }}
+              />
+            )}
+          </Drawer>
+        </Drawer>
+      ) : (
+        <Modal
+          title="Create Note"
+          open={openModal}
+          onCancel={hideModal}
+          footer={null}
+          header={<h2>M</h2>}
+          centered
+          width="fit-content"
+        >
+          <div className="flex flex-col gap-4">
+            <Flex gap={8} vertical>
+              <p>Please select the type of content:</p>
+              <div className="flex justify-center gap-2">
+                {noteTypes.map(({ name, Icon }) => {
+                  return (
+                    <Button
+                      key={name}
                       style={{
-                        color:
+                        borderColor:
                           name === selectedType
                             ? "rgba(61, 142, 242, 0.992)"
-                            : "rgba(0, 0, 0, 0.88)",
+                            : "#8C8F92",
+                        display: "flex",
+                        alignItems: "center",
+                        padding: "3px 18px",
+                        height: "100%",
                       }}
-                    />
-                  </span>
-                </Button>
-              );
-            })}
+                      onClick={() => setSelectedType(name)}
+                    >
+                      <span className="text-lg">
+                        <Icon
+                          style={{
+                            color:
+                              name === selectedType
+                                ? "rgba(61, 142, 242, 0.992)"
+                                : "#8C8F92",
+                          }}
+                        />
+                      </span>
+                    </Button>
+                  );
+                })}
+              </div>
+            </Flex>
+
+            {selectedType === "PDF" && (
+              <UploadForm
+                type="pdf"
+                closeModal={() => {
+                  setOpenModal(false);
+                }}
+              />
+            )}
+            {selectedType === "Video" && (
+              <UploadForm
+                type="video"
+                closeModal={() => {
+                  setOpenModal(false);
+                }}
+              />
+            )}
+            {selectedType === "Audio" && (
+              <UploadForm
+                type="audio"
+                closeModal={() => {
+                  setOpenModal(false);
+                }}
+              />
+            )}
+            {selectedType === "Youtube" && (
+              <YoutubeUrlForm
+                closeModal={() => {
+                  setOpenModal(false);
+                }}
+              />
+            )}
+            {selectedType === "Text" && (
+              <TextForm
+                closeModal={() => {
+                  setOpenModal(false);
+                }}
+              />
+            )}
+            {selectedType === "URL" && (
+              <UrlForm
+                closeModal={() => {
+                  setOpenModal(false);
+                }}
+              />
+            )}
+
+            {/* <UploadImageForm /> */}
           </div>
-
-          {selectedType === "pdf" && (
-            <UploadForm
-              type="pdf"
-              closeModal={() => {
-                setOpenModal(false);
-              }}
-            />
-          )}
-          {selectedType === "video" && (
-            <UploadForm
-              type="video"
-              closeModal={() => {
-                setOpenModal(false);
-              }}
-            />
-          )}
-          {selectedType === "audio" && (
-            <UploadForm
-              type="audio"
-              closeModal={() => {
-                setOpenModal(false);
-              }}
-            />
-          )}
-          {selectedType === "youtube" && (
-            <YoutubeUrlForm
-              closeModal={() => {
-                setOpenModal(false);
-              }}
-            />
-          )}
-          {selectedType === "text" && (
-            <TextForm
-              closeModal={() => {
-                setOpenModal(false);
-              }}
-            />
-          )}
-          {selectedType === "url" && (
-            <UrlForm
-              closeModal={() => {
-                setOpenModal(false);
-              }}
-            />
-          )}
-
-          {/* <UploadImageForm /> */}
-        </div>
-      </Modal>
+        </Modal>
+      )}
     </>
   );
 }

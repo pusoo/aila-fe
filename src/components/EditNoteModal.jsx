@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Form, Input, Modal, message } from "antd";
+import { Button, Form, Input, Modal, message, Flex } from "antd";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import authAxios from "../api/authAxios";
@@ -54,7 +54,10 @@ const EditNoteModal = ({ transcription }) => {
 
   return (
     <>
-      <Button type="primary" onClick={showModal} danger>
+      <Button
+        onClick={showModal}
+        className="bg-primary hover:!bg-[#359EDD] hover:!text-white border-primary text-white h-9"
+      >
         Edit Transcription
       </Button>
       <Modal
@@ -91,14 +94,23 @@ const EditNoteModal = ({ transcription }) => {
           </Form.Item>
 
           <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              disabled={isLoading}
-              loading={isLoading}
-            >
-              Submit
-            </Button>
+            <Flex gap={10} className="flex justify-end">
+              <Button
+                onClick={handleCancel}
+                disabled={isLoading}
+                className="h-9"
+              >
+                Cancel
+              </Button>
+              <Button
+                htmlType="submit"
+                disabled={isLoading}
+                loading={isLoading}
+                className="bg-primary hover:!bg-[#359EDD] hover:!text-white border-primary text-white h-9"
+              >
+                Save
+              </Button>
+            </Flex>
           </Form.Item>
         </Form>
       </Modal>

@@ -9,18 +9,19 @@ const NoteChatSidebar = ({ toggleTab }) => {
   const { selectedNote } = useNoteContext();
   const { width: screenWidth } = useWindowSize();
   const isMobile = screenWidth < 640;
+
   return (
     selectedNote && (
-      <div
-        className={`bg-slate-100 flex flex-col gap-2 pb-2  text-gray-800 text-sm shadow h-full`}
-      >
-        <div className="shadow flex items-center justify-center sm:justify-start !h-[50px] relative">
-          <Typography.Title level={5} className="!mb-0 px-3">
+      <div className="flex flex-col gap-2 pb-2 text-sm h-full">
+        <div className="flex items-center justify-center sm:justify-start !h-[50px] relative">
+          <Typography.Title
+            className="!mb-0 px-3 sm:level-3 !text-2xl sm:!text-base"
+          >
             Chat
           </Typography.Title>
 
           <CloseOutlined
-            className="block sm:hidden absolute left-4"
+            className="block sm:hidden absolute left-2 sm:left-4 text-xl"
             onClick={toggleTab}
           />
         </div>
@@ -29,8 +30,8 @@ const NoteChatSidebar = ({ toggleTab }) => {
           vertical
           className="flex-1"
           style={{
-            width: isMobile ? "100%" : "350px",
-            padding: 16,
+            width: isMobile ? "100%" : "264px",
+            padding: isMobile ? "0px" : "16px",
             height: "100%",
             flexShrink: 0,
             position: "relative",

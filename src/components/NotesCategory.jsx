@@ -1,4 +1,4 @@
-import { Card, Typography } from "antd";
+import { Typography, Flex } from "antd";
 import { Link } from "react-router-dom";
 
 import pdfIcon from "../assets/pdf-icon.png";
@@ -6,67 +6,87 @@ import audioIcon from "../assets/audio-icon.png";
 import videoIcon from "../assets/video-icon.png";
 import useNoteContext from "../hooks/useNoteContext";
 
+const { Text } = Typography;
+
 const NotesCategory = () => {
   const { selectedNote } = useNoteContext();
 
   return (
-    <div className="w-full gap-5 flex flex-col sm:flex-row px-8 sm:px-0">
-      <Card
-        bodyStyle={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: "0.4rem",
+    <div className="w-full justify-center items-center flex-col h-full flex">
+      <Text
+        strong
+        style={{
+          marginBottom: "15px",
+          color: "#8C8F92",
+          alignSelf: "flex-start",
         }}
-        className=" flex-1  bg-white border-[#d9d9d9] shadow border-dashed border-2 text-center cursor-pointer min-h-24 hover:scale-105 duration-200 ease-in-out"
-        onClick={() => { }}
       >
-        <div className="w-12 aspect-square">
-          <img src={pdfIcon} alt="pdf icon" />
-        </div>
-        <Typography.Title level={4}>PDF</Typography.Title>
-        <Typography.Text>
-          Click to transform text into a document.
-        </Typography.Text>
-      </Card>
-      <Link to={`/generate/${selectedNote._id}?type=audio`} className="flex-1">
-        <Card
-          bodyStyle={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "0.4rem",
-          }}
-          className=" bg-white border-[#d9d9d9] h-full shadow border-dashed border-2 text-center cursor-pointer min-h-24 hover:scale-105 duration-200 ease-in-out"
+        Generate Media
+      </Text>
+      <Flex
+        gap={20}
+        className="w-full justify-center items-center flex-col sm:flex-row"
+      >
+        <button className="flex items-center w-full h-full rounded-xl py-4 px-5 border-solid border-2 border-tertiary bg-transparent hover:border-primary">
+          <Flex
+            align="center"
+            gap={15}
+            className=" flex-row sm:flex-col w-full"
+          >
+            <img
+              src={pdfIcon}
+              alt="pdf icon"
+              className="w-6 h-6 sm:w-9 sm:h-9"
+            />
+            <Flex vertical className="text-left sm:text-center">
+              <Text strong>PDF</Text>
+              <Text type="secondary leading-snug">
+                Convert text into a document.
+              </Text>
+            </Flex>
+          </Flex>
+        </button>
+        <Link
+          to={`/generate/${selectedNote._id}?type=audio`}
+          className="flex justify-center w-full h-full"
         >
-          <div className="w-12 aspect-square">
-            <img src={audioIcon} alt="audio icon" />
-          </div>
-          <Typography.Title level={4}>Audio</Typography.Title>
-          <Typography.Text>
-            Convert your content into an engaging podcast.
-          </Typography.Text>
-        </Card>
-      </Link>
-      <Link to={`/generate/${selectedNote._id}?type=video`} className="flex-1">
-        <Card
-          bodyStyle={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "0.4rem",
-          }}
-          className="  bg-white border-[#d9d9d9] shadow border-dashed border-2 text-center cursor-pointer min-h-24 hover:scale-105 duration-200 ease-in-out h-full"
+          <button className="items-center w-full h-full rounded-xl py-4 px-5 border-solid border-2 border-tertiary bg-transparent hover:border-primary">
+            <Flex align="center" gap={15} className="flex-row sm:flex-col">
+              <img
+                src={audioIcon}
+                alt="audio icon"
+                className="w-6 h-6 sm:w-9 sm:h-9"
+              />
+              <Flex vertical className="text-left sm:text-center">
+                <Text strong>Audio</Text>
+                <Text type="secondary leading-snug">
+                  Transform content into audio.
+                </Text>
+              </Flex>
+            </Flex>
+          </button>
+        </Link>
+        <Link
+          to={`/generate/${selectedNote._id}?type=video`}
+          className="flex justify-center w-full h-full"
         >
-          <div className="w-12 aspect-square">
-            <img src={videoIcon} alt="video icon" />
-          </div>
-          <Typography.Title level={4}>Video</Typography.Title>
-          <Typography.Text>
-            Transform your text into interactive content.
-          </Typography.Text>
-        </Card>
-      </Link>
+          <button className="items-center w-full h-full rounded-xl py-4 px-5 border-solid border-2 border-tertiary bg-transparent hover:border-primary">
+            <Flex align="center" gap={15} className="flex-row sm:flex-col">
+              <img
+                src={videoIcon}
+                alt="video icon"
+                className="w-6 h-6 sm:w-9 sm:h-9"
+              />
+              <Flex vertical className="text-left sm:text-center">
+                <Text strong>Video</Text>
+                <Text type="secondary leading-snug">
+                  Turn text into interactive content.
+                </Text>
+              </Flex>
+            </Flex>
+          </button>
+        </Link>
+      </Flex>
     </div>
   );
 };

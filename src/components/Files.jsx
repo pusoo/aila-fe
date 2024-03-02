@@ -1,10 +1,18 @@
 import { MoreOutlined } from "@ant-design/icons";
 import { Card, Flex, Typography } from "antd";
 import EmptyFile from "./EmptyFile";
+
+const { Text } = Typography;
+
 const Files = () => {
   return (
     <>
-      <Typography.Title level={5}>Files:</Typography.Title>
+      <Text
+        strong
+        style={{ marginBottom: "15px", color: "#8C8F92" }}
+      >
+        Files
+      </Text>
       <EmptyFile />
 
       {/* <Flex vertical className="w-full">

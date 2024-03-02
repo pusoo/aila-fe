@@ -2,22 +2,30 @@ import NoteSidebar from "../../components/NoteSidebar";
 import NoteMainContent from "../../components/NoteMainContent";
 import NoteChatSidebar from "../../components/NoteChatSidebar";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import useNoteContext from "../../hooks/useNoteContext";
+import { useWindowSize } from "../../hooks/useWindowSize";
 
 function Notes() {
-  const [showNoteTab, setShowNoteTab] = useState(true);
+  const [showNoteTab, setShowNoteTab] = useState(false);
   const toggleNoteTab = () => setShowNoteTab((prev) => !prev);
   const { selectedNote } = useNoteContext();
 
-  const [showChatTab, setShowChatTab] = useState(true);
+  const [showChatTab, setShowChatTab] = useState(false);
   const toggleChatTab = () => setShowChatTab((prev) => !prev);
+  const { width: screenWidth } = useWindowSize();
+  useEffect(() => {
+    if (screenWidth > 640) {
+      setShowNoteTab(true);
+      setShowChatTab(true);
+    }
+  }, [screenWidth]);
 
   return (
     <div className="relative z-0 flex h-full w-full overflow-hidden">
       {/* Note Sidebar */}
-      <Sidebar showTab={showNoteTab} width={"260px"} toggleTab={toggleNoteTab}>
+      <Sidebar showTab={showNoteTab} width="264px" toggleTab={toggleNoteTab}>
         <NoteSidebar />
       </Sidebar>
       {/* Content */}
@@ -28,15 +36,16 @@ function Notes() {
         toggleChatTab={toggleChatTab}
       />
       {/* Chat Sidebar*/}
-      {selectedNote && <Sidebar
-        showTab={showChatTab}
-        width={"350px"}
-        toggleTab={toggleChatTab}
-        position="bottom"
-      >
-        <NoteChatSidebar toggleTab={toggleChatTab} />
-      </Sidebar>}
-
+      {selectedNote && (
+        <Sidebar
+          showTab={showChatTab}
+          width="264px"
+          toggleTab={toggleChatTab}
+          position="bottom"
+        >
+          <NoteChatSidebar toggleTab={toggleChatTab} />
+        </Sidebar>
+      )}
     </div>
   );
 }

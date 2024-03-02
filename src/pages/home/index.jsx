@@ -35,7 +35,7 @@ function Home() {
     <Layout style={{ height: "100vh" }}>
       <NoteProvider>
         <Navbar />
-        <Content style={{ padding: "0", overflow: "auto" }}>
+        <Content className="bg-background" style={{ padding: "0", overflow: "auto" }}>
           <Outlet />
         </Content>
       </NoteProvider>

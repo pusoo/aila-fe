@@ -1,11 +1,12 @@
-import { Empty, Flex, Tooltip, Typography } from "antd";
+import { Button, Empty, Flex } from "antd";
 
 import useNoteContext from "../hooks/useNoteContext";
 import Note from "./Note";
 import CreateNoteModal from "./CreateNoteModal";
-import cloudLogo from "../assets/cloud-backup.svg";
-import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
-import robotIcon from "../assets/robot-icon.svg";
+import { LeftOutlined } from "@ant-design/icons";
+import { RiRobot2Line } from "react-icons/ri";
+import EmptyStateCreateNoteButton from "./EmptyStateCreateNoteButton";
+
 const NoteMainContent = ({
   showNoteTab,
   showChatTab,
@@ -13,12 +14,25 @@ const NoteMainContent = ({
   toggleChatTab,
 }) => {
   const { notes, setSelectedNote, selectedNote } = useNoteContext();
-
   return (
-    <div className="flex flex-1 p-5 overflow-y-scroll relative">
-      {(notes || []).length > 0 ? (
-        selectedNote ? (
-          <Note note={selectedNote} setNote={setSelectedNote} />
+    <>
+      <div className="flex p-8 relative overflow-auto w-full">
+        {/* overflow-auto */}
+        {(notes || []).length > 0 ? (
+          selectedNote ? (
+            <Note note={selectedNote} setNote={setSelectedNote} />
+          ) : (
+            <Flex
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                flex: 1,
+              }}>
+              <Empty
+                imageStyle={{ height: 160 }}
+                description={<span>Please select a note</span>}></Empty>
+            </Flex>
+          )
         ) : (
           <Flex
             style={{
@@ -26,108 +40,89 @@ const NoteMainContent = ({
               justifyContent: "center",
               flex: 1,
             }}
-          >
-            <Empty
-              imageStyle={{ height: 160 }}
-              description={<span>Please select a note</span>}
-            ></Empty>
+            vertical>
+            <Flex
+              className="w-full justify-center items-center flex-col sm:flex-row"
+              gap={15}>
+              <CreateNoteModal />
+              {/* <CreateFolderMainContent /> */}
+            </Flex>
+            <Flex
+              vertical
+              gap={20}
+              className="w-full md:w-[28.063rem] justify-center items-center h-full">
+              <Empty
+                description={<span>There are no notes</span>}
+                className="flex flex-col justify-center items-center">
+                <div className="hidden sm:block">
+                  <EmptyStateCreateNoteButton />
+                </div>
+              </Empty>
+            </Flex>
           </Flex>
-        )
-      ) : (
-        <Flex
-          style={{
-            alignItems: "center",
-            justifyContent: "center",
-            flex: 1,
-          }}
-        >
-          <Flex
-            vertical
-            gap={200}
-            className="w-full md:w-[28.063rem] justify-end items-center h-full"
-          >
-            <div className="flex flex-col">
-              <img src={cloudLogo} width={315} />
-              <div className="flex flex-col gap-4">
-                <Typography.Title
-                  level={4}
-                  className="!text-gray-600 text-center"
-                >
-                  Create Note
-                </Typography.Title>
-                <Typography.Text className="!text-sm text-center !text-gray-600">
-                  Upload your educational materials for the chatbot to analyze
-                  and simplify the uploaded materials. Use our convenient file
-                  upload feature to streamline the process.
-                </Typography.Text>
-              </div>
-            </div>
-
-            <CreateNoteModal />
-          </Flex>
-        </Flex>
-      )}
-      <div className="fixed left-0 top-1/2 z-40" onClick={toggleNoteTab}>
-        {showNoteTab ? (
-          <div
-            className="hidden sm:block py-4 px-1 bg-white rounded-full cursor-pointer"
-            style={{
-              transform:
-                "translateX(250px) translateY(-50%) rotate(0deg) translateZ(0px)",
-            }}
-          >
-            <ArrowLeftOutlined />
-          </div>
-        ) : (
-          <div
-            className=" py-4 px-1 bg-white rounded-full cursor-pointer"
-            style={{
-              transform:
-                "translateX(0px) translateY(-50%) rotate(180deg) translateZ(0px)",
-            }}
-          >
-            <ArrowLeftOutlined />
-          </div>
         )}
-      </div>
-
-      {selectedNote && (
-        <div className="fixed right-0 top-1/2 z-40" onClick={toggleChatTab}>
-          {showChatTab ? (
+        <div className="fixed left-0 top-1/2 z-40" onClick={toggleNoteTab}>
+          {showNoteTab ? (
             <div
-              className="hidden sm:block py-4 px-1 bg-white rounded-full cursor-pointer"
+              className="hidden sm:block py-4 px-0.5 rounded-r-2xl cursor-pointer bg-background"
               style={{
                 transform:
-                  "translateX(-340px) translateY(-50%) rotate(0deg) translateZ(0px)",
-              }}
-            >
-              <ArrowRightOutlined />
+                  "translateX(272px) translateY(-50%) rotate(0deg) translateZ(0px)",
+                borderTop: "2px solid #E5E9EA",
+                borderRight: "2px solid #E5E9EA",
+                borderBottom: "2px solid #E5E9EA",
+              }}>
+              <LeftOutlined className="text-[#C5C9CA] text-xs" />
             </div>
           ) : (
             <div
-              className="hidden sm:block py-4 px-1 bg-white rounded-full cursor-pointer"
+              className="py-5 px-0.5 rounded-l-2xl cursor-pointer"
               style={{
                 transform:
                   "translateX(0px) translateY(-50%) rotate(180deg) translateZ(0px)",
-              }}
-            >
-              <ArrowRightOutlined />
+                borderTop: "2px solid #E5E9EA",
+                borderLeft: "2px solid #E5E9EA",
+                borderBottom: "2px solid #E5E9EA",
+              }}>
+              <LeftOutlined className="text-[#C5C9CA] text-xs" />
             </div>
           )}
         </div>
-      )}
-
-      <Tooltip
-        placement="left"
-        title={"Need Help?"}
-        onClick={toggleChatTab}
-        className="block sm:hidden"
-      >
-        <div className="fixed h-12 w-12 bg-green-400 rounded-full p-1 bottom-10 right-6 cursor-pointer">
-          <img src={robotIcon} alt="" className="h-10 w-10" />
-        </div>
-      </Tooltip>
-    </div>
+        {selectedNote && (
+          <div
+            className="hidden sm:block fixed right-0 top-1/2 z-40"
+            onClick={toggleChatTab}>
+            {showChatTab ? (
+              <div
+                className="flex flex-col py-4 px-2 rounded-l-2xl group cursor-pointer transform transition-transform ease-in-out duration-300 "
+                style={{
+                  transform:
+                    "translateX(-272px) translateY(-50%) translateZ(0px)",
+                }}>
+                <span className="bg-gray-200 group-hover:bg-gray-400 h-3.5 w-1 rounded-full group-hover:-rotate-[20deg] transition-transform ease-in-out duration-300 -mb-0.5"></span>
+                <span className="bg-gray-200 group-hover:bg-gray-400 h-3.5 w-1 rounded-full group-hover:rotate-[20deg] transition-transform ease-in-out duration-300 -mt-0.5"></span>
+              </div>
+            ) : (
+              <div
+                className="flex flex-col py-4 px-2 rounded-l-2xl group cursor-pointer transform transition-transform ease-in-out duration-300 "
+                style={{
+                  transform: "translateX(0px) translateY(-50%) translateZ(0px)",
+                }}>
+                <span className="bg-gray-200 group-hover:bg-gray-400 h-3.5 w-1 rounded-full rounded-bl-full rotate-[20deg] transition-transform ease-in-out duration-300 -mb-0.5"></span>
+                <span className="bg-gray-200 group-hover:bg-gray-400 h-3.5 w-1 rounded-full rounded-tl-full -rotate-[20deg] transition-transform ease-in-out duration-300 -mt-0.5"></span>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+      <Button
+        type="primary"
+        className="sm:hidden flex justify-center items-center gap-2 absolute right-5 bottom-7 !bg-secondary active:!bg-[#45AD68] drop-shadow-md border-none rounded-full text-white text-base !h-12"
+        onClick={toggleChatTab}>
+        <RiRobot2Line className="text-xl" />
+        Chatbot
+      </Button>
+    </>
   );
 };
 

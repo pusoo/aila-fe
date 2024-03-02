@@ -1,17 +1,17 @@
-import { Button, Segmented } from "antd";
+import { Button, Segmented, Typography } from "antd";
 import EmptyMedia from "../../components/EmptyMedia";
 import { useState } from "react";
-import MediaList from "../../components/MediaList";
 import { Header } from "antd/es/layout/layout";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
+const { Title } = Typography;
 
 const Media = () => {
   const [value, setValue] = useState("All");
   const navigate = useNavigate();
   return (
     <>
-      <Header className="flex items-center justify-center bg-white relative">
+      <Header className="flex items-center justify-center bg-white relative drop-shadow-sm">
         <div className="logo absolute left-8 bg-white mr-5 flex items-center">
           <Button
             icon={<ArrowLeftOutlined />}
@@ -20,12 +20,12 @@ const Media = () => {
             }}
           ></Button>
         </div>
-        <h1 className="flex items-center justify-center">Projects</h1>
+        <Title level={4}>Projects</Title>
       </Header>
       <div className="px-10 py-8 text-center sm:text-left">
         <Segmented
           size="middle"
-          className="p-2 border rounded-xl border-stone-200 border-solid"
+          className="p-2 border rounded-xl border-tertiary border-solid bg-transparent"
           options={[
             {
               label: <span className="px-2 py-1 rounded-xl">All</span>,

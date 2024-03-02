@@ -9,6 +9,8 @@ import useLocalStorage from "../../hooks/useLocalStorage";
 import { TOKEN_KEY } from "../../constants";
 import { API_URL } from "../../config";
 
+import Robot from "../../assets/aila-icon.png";
+
 // import Onboarding from "../../components/OnBoarding";
 
 const Signin = () => {
@@ -54,33 +56,29 @@ const Signin = () => {
         alignItems: "center",
         justifyContent: "center",
       }}
-      className="bg-primary"
+      className="bg-gradient-to-r from-sky-700 to-sky-900"
     >
-      {/* <Modal
-        open={false}
-        title=""
-        onCancel={handleCancel}
-        footer={null}
-        className="!w-[494px]"
-      >
-        <Onboarding handleClose={handleCancel} />
-      </Modal> */}
-
-      <div className="flex flex-col gap-5 sm:rounded-xl bg-neutral-100   md:m-0 w-screen h-screen sm:w-[24.375rem] sm:h-[36.25rem] relative px-9 py-12">
-        {/* header */}
-        <Flex gap={5} style={{ justifyContent: "center" }}>
-          <p className="text-lg font-bold  border-0 border-b-4 border-solid border-b-secondary">
-            Login
-          </p>{" "}
-          <p className="text-lg font-bold">to AILA</p>
+      <div className="absolute flex flex-col sm:rounded-xl bg-white py-0 sm:py-10 px-0 sm:px-7 md:m-0 w-screen h-screen sm:w-[24.375rem] sm:h-auto gap-10 z-10">
+        <Flex className="block sm:hidden bg-gradient-to-r from-sky-700 to-sky-900 rounded-bl-[70px] rounded-br-[70px] h-60 text-center shadow-lg">
+          <img src={Robot} alt="robot" width={200} />
         </Flex>
-        {/* sub header */}
-        <p className="text-sm text-center">
-          Welcome back! Sign in using your email to continue to us
-        </p>
 
+        {/* header */}
+        <Flex vertical>
+          <Flex gap={5} className="justify-center mb-5">
+            <p className="text-lg font-bold border-0 border-b-4 border-solid border-b-secondary">
+              Login
+            </p>
+            <p className="text-lg font-bold">to AILA</p>
+          </Flex>
+          {/* sub header */}
+          <p className="text-sm text-center">
+            Welcome back! Sign in using your email to <br /> continue to us.
+          </p>
+        </Flex>
         {/* form */}
-        <div className="flex-1 mt-16">
+        <Flex vertical>
+          {/* flex-1  */}
           <Form
             name="basic"
             initialValues={{
@@ -90,9 +88,10 @@ const Signin = () => {
             onFinish={onFinish}
             autoComplete="off"
             layout="vertical"
-            className="custom-forms flex flex-col justify-between h-full"
+            className="custom-forms flex flex-col gap-20 sm:px-0 px-10"
           >
-            <div className="relative">
+            {/* h-full */}
+            <Flex className="relative" vertical>
               <Form.Item
                 label="Your Email"
                 name="email"
@@ -105,7 +104,7 @@ const Signin = () => {
                   },
                 ]}
               >
-                <Input className="border-t-0 border-l-0 border-r-0 rounded-none focus:shadow-none custom-input bg-transparent" />
+                <Input className="border-t-0 border-l-0 border-r-0 rounded-none focus:shadow-none custom-input bg-transparent focus:!border-secondary hover:border-secondary" />
               </Form.Item>
 
               <Form.Item
@@ -119,30 +118,30 @@ const Signin = () => {
                   },
                 ]}
               >
-                <Input.Password className="border-t-0 border-l-0 border-r-0 rounded-none custom-input bg-transparent" />
+                <Input.Password className="border-t-0 border-l-0 border-r-0 rounded-none custom-input bg-transparent focus:!border-secondary hover:border-secondary" />
               </Form.Item>
               <div className="text-center pt-5 absolute bottom-0 right-0 invisible">
                 <a href="#" className=" text-secondary">
                   Forgot Password?
                 </a>
               </div>
-            </div>
+            </Flex>
 
-            <Form.Item>
+            <Form.Item className="mb-0">
               <div className="space-y-4">
                 <Button
                   type="primary"
                   htmlType="submit"
                   disabled={isLoading}
                   loading={isLoading}
-                  className="bg-secondary hover:bg-white custom-button w-full h-12 rounded-xl"
+                  className="bg-secondary hover:bg-white custom-button h-12 rounded-xl"
+                  block
                 >
                   Login
                 </Button>
-                <p className="text-center text-secondary">
-                  Don&apos;t have an account yet?
+                <p className="text-center">
+                  Don&apos;t have an account yet?&nbsp;
                   <Link to="/register" className="text-secondary">
-                    {" "}
                     Sign up
                   </Link>
                 </p>
@@ -152,7 +151,21 @@ const Signin = () => {
           {/* <Flex style={{ justifyContent: "space-between" }}>
             <Link to="/register">Register</Link>
           </Flex> */}
-        </div>
+        </Flex>
+      </div>
+      <div className="area">
+        <ul className="circles">
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+          <li></li>
+        </ul>
       </div>
     </Flex>
   );

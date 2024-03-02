@@ -1,107 +1,194 @@
-import { Avatar, Button, Input, Slider, Typography } from "antd";
-import { useQuery } from "@tanstack/react-query";
+import {
+  Flex,
+  Avatar,
+  Button,
+  Input,
+  Slider,
+  Typography,
+  ColorPicker,
+} from "antd";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import authAxios from "../api/authAxios";
 import { API_URL } from "../config";
 import UploadModal from "./UploadModal";
 import sparkleIcon from "../assets/sparkle-icon.svg";
+import { useEffect, useState } from "react";
+import VoiceModal from "./VoicesModal";
 
-function VideoDrawer() {
-  const { data: uploads } = useQuery({
+function VideoDrawer({ note, setNote }) {
+  const [selectedVoice, setSelectedVoice] = useState(null);
+  const [selectedAvatar, setSelectedAvatar] = useState(null);
+
+  const { data: avatars } = useQuery({
     queryKey: ["avatars"],
     queryFn: async () => {
-      const { data } = await authAxios.get(`${API_URL}/uploads`);
+      const { data } = await authAxios.get(`${API_URL}/talkingPhotos`);
       return data;
     },
     staleTime: Infinity,
   });
 
+  const { data: voices } = useQuery({
+    queryKey: ["voices"],
+    queryFn: async () => {
+      const { data } = await authAxios.get(`${API_URL}/avatars/voices`);
+      return data;
+    },
+    staleTime: Infinity,
+  });
+
+  useEffect(() => {
+    if (voices && Array.isArray(voices)) {
+      setSelectedVoice(voices[0]);
+    }
+  }, [voices]);
+
+  const handleInputChange = (e) => {
+    setNote((prevNote) => ({ ...prevNote, [e.target.name]: e.target.value }));
+  };
+  const queryClient = useQueryClient();
+
+  const generateVideoMutation = useMutation({
+    mutationFn: (mediaPayload) => {
+      return authAxios.post(`${API_URL}/medias/`, mediaPayload);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notes", note._id] });
+    },
+  });
+
+  const handleGenerateVideo = async () => {
+    try {
+      if (
+        !selectedAvatar.photoId &&
+        !note.summary &&
+        !selectedVoice.voice_id &&
+        !note._id
+      )
+        return;
+      const payload = {
+        photoId: selectedAvatar.photoId,
+        summary: note.summary,
+        voiceId: selectedVoice.voice_id,
+      };
+      const { data } = await authAxios.post(
+        `${API_URL}/heygens/generate-video`,
+        payload
+      );
+
+      if (data && data.data && data.data.video_id) {
+        const mediaPayload = {
+          note: note._id,
+          metaData: {
+            videoId: data.data.video_id,
+            photoId: selectedAvatar.photoId,
+            voiceId: selectedVoice.voice_id,
+          },
+          type: "video",
+        };
+        const media = await authAxios.post(`${API_URL}/medias/`, mediaPayload);
+        await generateVideoMutation.mutateAsync(mediaPayload);
+        console.info({ media });
+      }
+    } catch (error) {
+      console.info({ error });
+    }
+  };
+
+  if (!note) return null;
 
   return (
-    <div className="p-9 flex flex-col justify-between flex-1 bg-[#024264]">
-      <div className="flex flex-col gap-10">
-        <div className="">
-          <Typography.Paragraph className="!text-white !text-md !mb-2">
+    <div className="px-3 sm:px-7 py-3 sm:py-6 flex flex-col justify-between flex-1 bg-white h-full">
+      <div className="flex flex-col justify-between gap-6 sm:gap-3">
+        <div>
+          <Typography.Paragraph className="!mb-2 !text-base sm:!text-sm">
             Content Title
           </Typography.Paragraph>
 
           <Input
-            size="large"
-            className="!border-t-0 !border-l-0 !border-r-0 !border-b-white !bg-transparent !shadow-none !rounded-none text-white"
+            className="!border-t-0 !border-l-0 !border-r-0 !bg-transparent !rounded-none"
+            name="title"
+            value={(note && note.title) || ""}
+            onChange={handleInputChange}
           />
         </div>
 
-        <div className="">
-          <Typography.Paragraph className="!text-white !text-md">
-            Voice Type
-          </Typography.Paragraph>
+        <Flex vertical gap={10}>
+          <Flex vertical>
+            <Typography.Paragraph className="!mb-2 !text-base sm:!text-sm">
+              Voice Type
+            </Typography.Paragraph>
+            <VoiceModal
+              voices={voices}
+              selectedVoice={selectedVoice}
+              setSelectedVoice={setSelectedVoice}
+            />
+          </Flex>
 
-          <Button
-            type="Text"
-            size="large"
-            block
-            className=" opacity-90 bg-[#FFFFFFE5]"
-          >
-            Tony-Professional
-          </Button>
-        </div>
+          <Flex vertical>
+            <div className="flex gap-3 justify-center items-center">
+              <Typography.Paragraph className="!mb-2 !text-base sm:!text-sm">
+                Pitch
+              </Typography.Paragraph>
+              <Slider
+                defaultValue={1}
+                max={16}
+                tooltip={{ formatter: null }}
+                className="flex-1"
+              />
+            </div>
 
-        <div className="flex gap-4 items-center">
-          <Typography.Paragraph className="!text-white !text-md !mb-0">
-            Pitch
-          </Typography.Paragraph>
-          <Slider
-            defaultValue={1}
-            max={16}
-            tooltip={{ formatter: null }}
-            className="flex-1"
-          />
-        </div>
-
-        <div className="flex gap-4 items-center">
-          <Typography.Paragraph className="!text-white !text-md !mb-0">
-            Speed
-          </Typography.Paragraph>
-          <Slider
-            defaultValue={1}
-            max={16}
-            tooltip={{ formatter: null }}
-            className="flex-1"
-          />
-        </div>
-
-        <div className="">
-          <Typography.Paragraph className="!text-white !text-md">
+            <div className="flex gap-3 justify-center items-center">
+              <Typography.Paragraph className="!mb-2 !text-base sm:!text-sm">
+                Speed
+              </Typography.Paragraph>
+              <Slider
+                defaultValue={1}
+                max={16}
+                tooltip={{ formatter: null }}
+                className="flex-1"
+              />
+            </div>
+          </Flex>
+        </Flex>
+        <div>
+          <Typography.Paragraph className="!mb-2 !text-base sm:!text-sm">
             Avatar
           </Typography.Paragraph>
-          <Button
-            type="Text"
-            size="large"
-            block
-            className="!h-14 opacity-90 bg-[#FFFFFFE5] flex items-center gap-2 "
-          >
+          <div className="!h-12 opacity-90 flex items-center gap-2 p-3 rounded-lg" style={{border: "1px solid #40A9E8"}}>
             <div className="flex gap-3">
-              {uploads && Array.isArray(uploads.results) ? uploads.results.map(upload => <Avatar key={upload._id} size={40} src={upload.url}></Avatar>
-              ) : null}
-
+              {avatars && Array.isArray(avatars.results)
+                ? avatars.results.map((avatar) => (
+                    <Avatar
+                      key={avatar._id}
+                      size={40}
+                      src={avatar.url}
+                      onClick={() => setSelectedAvatar(avatar)}
+                      className={`${
+                        selectedAvatar && selectedAvatar._id === avatar._id
+                          ? "border-primary border-6"
+                          : ""
+                      }`}
+                    ></Avatar>
+                  ))
+                : null}
             </div>
             <UploadModal />
-          </Button>
+          </div>
         </div>
 
-        <div className="">
-          <Typography.Paragraph className="!text-white !text-md">
+        <div>
+          <Typography.Paragraph className="!mb-2 !text-base sm:!text-sm">
             Background Color
           </Typography.Paragraph>
           <Button
             type="Text"
             size="large"
             block
-            className="!h-full !max-h-[3rem] opacity-90 bg-[#FFFFFFE5] flex items-center justify-between"
+            className="!h-11 !max-h-[3rem] opacity-90 border-primary flex items-center justify-between"
           >
-            <div className="">Select Color</div>
-
-            <div className="h-8 w-8 bg-stone-600"></div>
+            Select a color <ColorPicker defaultValue="#1677ff" />
           </Button>
         </div>
       </div>
@@ -110,11 +197,12 @@ function VideoDrawer() {
         block
         type="primary"
         size="large"
-        className="bg-[#40A9E8]  !text-md !h-full !max-h-[3.5rem]"
+        className="bg-primary hover:!bg-[#359EDD] h-12 sm:h-11"
+        onClick={handleGenerateVideo}
       >
         <div className="flex items-center justify-center gap-2">
-          <img className="h-8 aspect-square" src={sparkleIcon} />
-          <Typography.Text className="text-white text-lg">
+          <img className="h-5 aspect-square" src={sparkleIcon} />
+          <Typography.Text className="text-white text-base sm:!text-base">
             Generate Video
           </Typography.Text>
         </div>
@@ -123,4 +211,4 @@ function VideoDrawer() {
   );
 }
 
-export default VideoDrawer
+export default VideoDrawer;

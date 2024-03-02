@@ -1,21 +1,16 @@
-import { Button, Empty, Typography } from "antd";
+import { Empty, Typography } from "antd";
 
 const EmptyFile = () => {
   return (
     <Empty
-      image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-      imageStyle={{ height: 120 }}
+      image={Empty.PRESENTED_IMAGE_SIMPLE}
       description={
-        <Typography.Paragraph className=" !text-lg text-center max-w-[40ch] mx-auto !mt-12 !mb-6">
-          Create your first PDF, audio, or video effortlessly and elevate your
-          learning experience. Click to begin!
+        <Typography.Paragraph className=" !text-base text-center max-w-[40ch] mx-auto !mt-12 !mb-6 opacity-30">
+          It looks like you don&apos;t have any files yet. <br /> Create your first
+          PDF, audio, or video effortlessly to elevate your learning experience.
         </Typography.Paragraph>
       }
-    >
-      <Button type="primary" className="bg-blue-400 h-9 ">
-        Create Now
-      </Button>
-    </Empty>
+    ></Empty>
   );
 };
 

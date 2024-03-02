@@ -28,9 +28,10 @@ const Sidebar = ({
   } else {
     return (
       <div
-        className="hidden sm:block flex-shrink-0 overflow-x-hidden bg-white transition-all"
+        className="hidden sm:block flex-shrink-0 overflow-x-hidden transition-all rounded-lg my-5 mx-2.5"
         style={{
           width: showTab ? width : "0px",
+          border: showTab ? "2px solid #E5E9EA" : "0px",
           visibility: showTab ? "visible" : "invisible",
         }}
       >
@@ -41,9 +42,9 @@ const Sidebar = ({
                 showTab ? "opacity-100" : "opacity-50"
               }`}
             >
-              <div className="relative h-full w-full flex-1 items-start border-white/20">
+              <div className="relative h-full w-full flex-1 items-start">
                 <nav className="flex h-full w-full flex-col">
-                  <div className="flex-col flex-1 transition-opacity duration-500 -mr-2 pr-2 overflow-y-auto">
+                  <div className="flex-col flex-1 transition-opacity duration-500 overflow-y-auto">
                     {children}
                   </div>
                 </nav>

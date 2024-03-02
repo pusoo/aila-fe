@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import authAxios from "../api/authAxios";
 import { API_URL } from "../config";
 
-const UrlForm = ({ closeModal = () => { } }) => {
+const UrlForm = ({ closeModal = () => {} }) => {
   const queryClient = useQueryClient();
   const [title, setTitle] = useState("");
   const [loading, setLoading] = useState(false);
@@ -12,13 +12,10 @@ const UrlForm = ({ closeModal = () => { } }) => {
 
   const mutation = useMutation({
     mutationFn: (url) => {
-      return authAxios.post(
-        `${API_URL}/notes/url`,
-        {
-          title,
-          url,
-        },
-      );
+      return authAxios.post(`${API_URL}/notes/url`, {
+        title,
+        url,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notes"] });
@@ -49,32 +46,34 @@ const UrlForm = ({ closeModal = () => { } }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginTop: 16 }}>
-      <p style={{ marginBottom: 4 }}>Note:</p>
-      <Input
-        placeholder="Enter note title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-      <p style={{ marginBottom: 4, marginTop: 8 }}>
-        Enter a valid website URL:
-      </p>
-      <Flex vertical>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+      <Flex gap={5} vertical>
+        <p>Note:</p>
         <Input
-          placeholder="Enter site url"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
+          placeholder="Enter note title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
-        <Button
-          type="primary"
-          htmlType="submit"
-          style={{ alignSelf: "end", marginTop: 8 }}
-          loading={loading}
-          disabled={!title.trim() || !validateUrl(url)}
-        >
-          Submit
-        </Button>
       </Flex>
+      <Flex gap={5} vertical>
+        <p>Enter a valid website URL:</p>
+        <Flex vertical>
+          <Input
+            placeholder="Enter site url"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+          />
+        </Flex>
+      </Flex>
+      <Button
+        type="primary"
+        htmlType="submit"
+        style={{ alignSelf: "end" }}
+        loading={loading}
+        disabled={!title.trim() || !validateUrl(url)}
+      >
+        Submit
+      </Button>
     </form>
   );
 };

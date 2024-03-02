@@ -3,7 +3,7 @@ import moment from "moment";
 import YouTube from "react-youtube";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
-import { CopyOutlined, EditFilled, RedoOutlined } from "@ant-design/icons";
+import { CopyOutlined, EditOutlined, RedoOutlined } from "@ant-design/icons";
 
 import authAxios from "../api/authAxios";
 import { API_URL } from "../config";
@@ -11,6 +11,9 @@ import useNoteContext from "../hooks/useNoteContext";
 import NotesCategory from "./NotesCategory";
 import Files from "./Files";
 import WarningArea from "./WarningArea";
+import CreateNoteModal from "./CreateNoteModal";
+
+const { Text } = Typography;
 
 const Note = () => {
   const queryClient = useQueryClient();
@@ -30,14 +33,13 @@ const Note = () => {
     },
   });
 
-
   const editMutation = useMutation({
     mutationFn: (title) => {
       if (!selectedNote._id) return;
       return authAxios.patch(`${API_URL}/notes/${selectedNote._id}`, { title });
     },
     onSuccess: ({ data }) => {
-      setSelectedNote(data)
+      setSelectedNote(data);
       queryClient.invalidateQueries({ queryKey: ["notes"] });
     },
   });
@@ -57,7 +59,7 @@ const Note = () => {
 
   useEffect(() => {
     if (response && response.status === "success") {
-      setSelectedNote(response)
+      setSelectedNote(response);
       setIsComplete(true);
     } else {
       setIsComplete(false);
@@ -135,7 +137,7 @@ const Note = () => {
         return Promise.resolve(true);
       }
     } catch (error) {
-      console.error('Unable to copy script to clipboard:', error);
+      console.error("Unable to copy script to clipboard:", error);
       return Promise.reject(false);
     }
   };
@@ -143,19 +145,9 @@ const Note = () => {
   const renderMedia = () => {
     switch (selectedNote.type) {
       case "pdf":
-        return (
-          <iframe
-            src={selectedNote.url}
-            className="w-full h-96"
-          ></iframe>
-        );
+        return <iframe src={selectedNote.url} className="w-full h-96"></iframe>;
       case "url":
-        return (
-          <iframe
-            src={selectedNote.url}
-            className="w-full h-96"
-          ></iframe>
-        );
+        return <iframe src={selectedNote.url} className="w-full h-96"></iframe>;
 
       case "video":
         return (
@@ -215,83 +207,107 @@ const Note = () => {
   return (
     <Flex
       vertical
-      gap={20}
-      className="max-w-full md:max-w-xl lg:max-w-2xl xl:max-w-3xl mx-auto"
-    >
+      className="max-w-full md:max-w-xl lg:max-w-2xl xl:max-w-5xl 2xl:max-w-4xl mx-auto">
       <Flex
-        className="px-8 sm:px-0"
-        style={{ justifyContent: "space-between" }}
-      >
+        className="w-full justify-center items-center flex-col sm:flex-row"
+        gap={15}>
+        <CreateNoteModal />
+        {/* <CreateFolderMainContent /> */}
+      </Flex>
+
+      <Divider className="border-none m-3" />
+
+      <Flex className="px-0 sm:px-0" vertical>
         <Typography.Title
           editable={{
-            icon: <EditFilled className="text-slate-700" />,
+            icon: <EditOutlined className="text-slate-400" />,
             onChange: (e) => editMutation.mutateAsync(e),
             text: selectedNote.title,
-
           }}
-          level={4}
-        >
+          level={4}>
           {selectedNote.title}
         </Typography.Title>
-      </Flex>
-      <Flex className="px-8 sm:px-0" vertical gap={8}>
         <Typography.Text className="text-gray-400">
           Date: {moment(selectedNote.createdAt).format("MMM DD, YYYY")}
         </Typography.Text>
       </Flex>
-      <NotesCategory />
-      {selectedNote.type !== "text" && (
-        <>
-          <Divider style={{ margin: 0 }} />
-          <Typography.Title level={5}>Media:</Typography.Title>
-        </>
-      )}
-      <div>
-        {renderMedia()}
-      </div>
 
-      <Divider style={{ margin: 0 }} />
+      <Divider className="border-none m-3" />
+
+      <Flex vertical>
+        {selectedNote.type !== "text" && (
+          <>
+            <Text strong style={{ marginBottom: "15px", color: "#8C8F92" }}>
+              Media
+            </Text>
+          </>
+        )}
+        <div>{renderMedia()}</div>
+      </Flex>
+
+      <Divider className="border-none m-3" />
+
       {!isComplete && response && <p>The note is still processing..</p>}
       {isSummaryLoading ? (
         <p>Summary is still processing..</p>
       ) : (
         selectedNote.summary && (
           <>
-            <Typography.Title level={5}>Summary:</Typography.Title>
-            <Flex className="bg-white rounded p-5">
-              <div className="flex-1">
-                <p>{selectedNote.summary}</p>
-              </div>
-              <Flex vertical className="gap-1">
-                <Button type="text">
-                  <CopyOutlined onClick={copyTextToClipboard} />
-                </Button>
-                <Button type="text" onClick={() => {
-                  if (selectedNote.summary) {
-                    Modal.confirm({
-                      title: "Summarize notes",
-                      content:
-                        "Are you certain of your intention to re-summarize your transcription? This action will result in the loss of the current summary.",
-                      onOk: handleSummarize,
-                      footer: (_, { OkBtn, CancelBtn }) => (
-                        <>
-                          <CancelBtn />
-                          <OkBtn />
-                        </>
-                      ),
-                    });
-                    return;
-                  }
-                  handleSummarize();
-                }}>
-                  <RedoOutlined />
-                </Button>
+            <Flex vertical>
+              <Text strong style={{ marginBottom: "15px", color: "#8C8F92" }}>
+                Summary
+              </Text>
+              <Flex className="bg-white rounded-lg p-5 border-solid border-2 border-tertiary">
+                <div className="flex-1">
+                  <p>{selectedNote.summary}</p>
+                </div>
+                <Flex vertical className="pl-2">
+                  <Button type="text" className="p-0">
+                    <CopyOutlined
+                      onClick={copyTextToClipboard}
+                      className="text-gray-400 text-base"
+                    />
+                  </Button>
+                  <Button
+                    type="text"
+                    onClick={() => {
+                      if (selectedNote.summary) {
+                        Modal.confirm({
+                          title: "Summarize notes",
+                          content:
+                            "Are you certain of your intention to re-summarize your transcription? This action will result in the loss of the current summary.",
+                          onOk: handleSummarize,
+                          footer: (_, { OkBtn, CancelBtn }) => (
+                            <>
+                              <CancelBtn />
+                              <OkBtn />
+                            </>
+                          ),
+                        });
+                        return;
+                      }
+                      handleSummarize();
+                    }}
+                    className="p-0">
+                    <RedoOutlined className="text-gray-400 text-base" />
+                  </Button>
+                </Flex>
               </Flex>
             </Flex>
           </>
         )
       )}
+
+      <Divider />
+
+      <NotesCategory />
+
+      <Divider className="border-none m-3" />
+
       <Files />
+
+      <Divider />
+
       <WarningArea
         transcription={(response && response.transcription) || ""}
         onDelete={handleDelete}
