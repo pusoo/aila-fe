@@ -5,7 +5,7 @@ import {
   Input,
   Slider,
   Typography,
-  ColorPicker,
+  // ColorPicker,
 } from "antd";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -100,7 +100,7 @@ function VideoDrawer({ note, setNote }) {
 
   return (
     <div className="px-3 sm:px-7 py-3 sm:py-6 flex flex-col justify-between flex-1 bg-white h-full">
-      <div className="flex flex-col justify-between gap-6 sm:gap-3">
+      <div className="flex flex-col justify-between gap-6 sm:gap-7">
         <div>
           <Typography.Paragraph className="!mb-2 !text-base sm:!text-sm">
             Content Title
@@ -156,7 +156,7 @@ function VideoDrawer({ note, setNote }) {
           <Typography.Paragraph className="!mb-2 !text-base sm:!text-sm">
             Avatar
           </Typography.Paragraph>
-          <div className="!h-12 opacity-90 flex items-center gap-2 p-3 rounded-lg" style={{border: "1px solid #40A9E8"}}>
+          <div className="h-14 opacity-90 flex items-center gap-2 rounded-lg px-2" style={{border: "1px solid #40A9E8"}}>
             <div className="flex gap-3">
               {avatars && Array.isArray(avatars.results)
                 ? avatars.results.map((avatar) => (
@@ -178,7 +178,7 @@ function VideoDrawer({ note, setNote }) {
           </div>
         </div>
 
-        <div>
+        {/* <div>
           <Typography.Paragraph className="!mb-2 !text-base sm:!text-sm">
             Background Color
           </Typography.Paragraph>
@@ -190,7 +190,7 @@ function VideoDrawer({ note, setNote }) {
           >
             Select a color <ColorPicker defaultValue="#1677ff" />
           </Button>
-        </div>
+        </div> */}
       </div>
 
       <Button

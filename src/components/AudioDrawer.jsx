@@ -4,7 +4,7 @@ import sparkleIcon from "../assets/sparkle-icon.svg";
 function AudioDrawer() {
   return (
     <div className="px-3 sm:px-7 py-3 sm:py-7 flex flex-col justify-between flex-1 bg-white h-full">
-      <div className="flex flex-col justify-between gap-6 sm:gap-3">
+      <div className="flex flex-col justify-between gap-6 sm:gap-7">
         <div>
           <Typography.Paragraph className="!mb-2 !text-base sm:!text-sm">
             Content Title

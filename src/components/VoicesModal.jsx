@@ -19,7 +19,7 @@ const VoiceModal = ({ voices, selectedVoice, setSelectedVoice }) => {
         type="Text"
         size="large"
         block
-        className="!h-11 opacity-90 border-primary"
+        className="h-12 opacity-90 border-primary"
         onClick={showModal}
       >
         {selectedVoice && selectedVoice.display_name || ""}

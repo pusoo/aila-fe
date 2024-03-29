@@ -39,7 +39,7 @@ function Notes() {
       {selectedNote && (
         <Sidebar
           showTab={showChatTab}
-          width="264px"
+          width="280px"
           toggleTab={toggleChatTab}
           position="bottom"
         >

@@ -83,7 +83,7 @@ const Note = () => {
   const handleDelete = () => {
     Modal.confirm({
       title: "Delete note",
-      content: "Are you sure you want to delete this note?",
+      content: "Once deleted, notes cannot be recovered. Be careful.",
       onOk: handleDeleteNote,
       okButtonProps: {
         isLoading,
@@ -207,29 +207,38 @@ const Note = () => {
   return (
     <Flex
       vertical
-      className="max-w-full md:max-w-xl lg:max-w-2xl xl:max-w-5xl 2xl:max-w-4xl mx-auto">
+      className="max-w-full md:max-w-xl lg:max-w-2xl xl:max-w-5xl 2xl:max-w-4xl mx-auto"
+    >
       <Flex
         className="w-full justify-center items-center flex-col sm:flex-row"
-        gap={15}>
+        gap={15}
+      >
         <CreateNoteModal />
         {/* <CreateFolderMainContent /> */}
       </Flex>
 
       <Divider className="border-none m-3" />
 
-      <Flex className="px-0 sm:px-0" vertical>
-        <Typography.Title
-          editable={{
-            icon: <EditOutlined className="text-slate-400" />,
-            onChange: (e) => editMutation.mutateAsync(e),
-            text: selectedNote.title,
-          }}
-          level={4}>
-          {selectedNote.title}
-        </Typography.Title>
-        <Typography.Text className="text-gray-400">
-          Date: {moment(selectedNote.createdAt).format("MMM DD, YYYY")}
-        </Typography.Text>
+      <Flex className="px-0 sm:px-0 justify-between">
+        <Flex vertical>
+          <Typography.Title
+            editable={{
+              icon: <EditOutlined className="text-slate-400" />,
+              onChange: (e) => editMutation.mutateAsync(e),
+              text: selectedNote.title,
+            }}
+            level={4}
+          >
+            {selectedNote.title}
+          </Typography.Title>
+          <Typography.Text className="text-gray-400">
+            Date: {moment(selectedNote.createdAt).format("MMM DD, YYYY")}
+          </Typography.Text>
+        </Flex>
+        <WarningArea
+          transcription={(response && response.transcription) || ""}
+          onDelete={handleDelete}
+        />
       </Flex>
 
       <Divider className="border-none m-3" />
@@ -288,7 +297,8 @@ const Note = () => {
                       }
                       handleSummarize();
                     }}
-                    className="p-0">
+                    className="p-0"
+                  >
                     <RedoOutlined className="text-gray-400 text-base" />
                   </Button>
                 </Flex>
@@ -305,13 +315,6 @@ const Note = () => {
       <Divider className="border-none m-3" />
 
       <Files />
-
-      <Divider />
-
-      <WarningArea
-        transcription={(response && response.transcription) || ""}
-        onDelete={handleDelete}
-      />
     </Flex>
   );
 };
