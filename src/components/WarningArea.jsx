@@ -1,41 +1,40 @@
-import { Button, Card, Flex, Typography } from "antd";
+import { Button, Flex, Menu, Dropdown } from "antd";
+import { MoreOutlined } from "@ant-design/icons";
 import EditNoteModal from "./EditNoteModal";
 
-const { Text } = Typography;
-
 const WarningArea = ({ transcription, onDelete }) => {
+  const menu = (
+    <Menu>
+      <Menu.Item key="1">
+        <EditNoteModal transcription={transcription} />
+      </Menu.Item>
+      <Menu.Item key="2" onClick={onDelete}>
+        Delete Note
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
-    <Flex vertical className="w-full pb-8">
-      <Text strong style={{ marginBottom: "15px", color: "#8C8F92" }}>
-        Warning Area
-      </Text>
+    // <Flex vertical className="gap-2">
+    //   <EditNoteModal transcription={transcription} />
+    //   <Button
+    //     danger
+    //     icon={<DeleteOutlined />}
+    //     onClick={onDelete}
+    //     className="h-9 !bg-transparent hover:!bg-transparent"
+    //   >
+    //     Delete Note
+    //   </Button>
+    // </Flex>
 
-      <Flex gap={15} vertical>
-        <Card className="bg-transparent border-2 border-tertiary w-full">
-          <Flex vertical className="gap-5">
-            <Typography.Text>
-              Modifying the transcription will affect the summary and chatbot responses.
-            </Typography.Text>
-            <div>
-              <EditNoteModal transcription={transcription} />
-            </div>
-          </Flex>
-        </Card>
-
-        <Card className="bg-transparent border-2 border-tertiary w-full">
-          <Flex vertical className="gap-5">
-            <Typography.Text>
-              Once deleted, notes cannot be recovered. Be careful.
-            </Typography.Text>
-            <div>
-              <Button onClick={onDelete} className="bg-primary hover:!bg-[#359EDD] hover:!text-white border-primary text-white h-9">
-                Delete Note
-              </Button>
-            </div>
-          </Flex>
-        </Card>
-      </Flex>
-    </Flex>
+    <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
+      <Button
+        shape="circle"
+        type="text"
+        icon={<MoreOutlined />}
+        className="border border-gray-400 text-gray-400 hover:!text-primary hover:border-primary hover:!bg-transparent"
+      />
+    </Dropdown>
   );
 };
 

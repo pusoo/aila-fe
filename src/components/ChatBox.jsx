@@ -136,17 +136,17 @@ function ChatBox({ note }) {
                   return (
                     <div key={index.toString()}>
                       {message.isAi ? (
-                        <Flex className="gap-3">
-                          <div className="w-9">
+                        <Flex className="gap-2.5">
+                          <div className="w-7">
                             <img src={aila} />
                           </div>
-                          <div className="flex-1 rounded-b-xl rounded-r-xl bg-white p-5 shadow">
+                          <div className="flex-1 rounded-b-xl rounded-r-xl bg-white p-3 shadow text-lg lg:text-sm">
                             {message.message}
                           </div>
                         </Flex>
                       ) : (
                         <Flex className="justify-end">
-                          <div className="rounded-t-xl rounded-l-xl bg-secondary p-5 text-white shadow">
+                          <div className="rounded-t-xl rounded-l-xl bg-primary p-3 text-white shadow text-lg lg:text-sm">
                             {message.message}
                           </div>
                         </Flex>
@@ -157,7 +157,7 @@ function ChatBox({ note }) {
             )}
             {isMessageLoading && (
               <Flex className="gap-3 items-center justify-self-end">
-                <div className="w-9">
+                <div className="w-7">
                   <img src={aila} />
                 </div>
                 <div className="rounded-xl bg-white shadow h-6 px-3 flex items-center w-12">
@@ -226,7 +226,7 @@ function ChatBox({ note }) {
         }}>
         <Flex>
           <Input
-            className="m-0 w-full resize-none border-2 border-tertiary text-xl sm:text-xs bg-transparent py-2 pl-3 pr-8 rounded-lg hover:border-primary focus:border-primary focus:outline-none"
+            className="m-0 w-full resize-none border-2 border-tertiary text-xl sm:text-xs bg-transparent py-2 pl-3 pr-8 rounded-lg hover:border-primary hover:bg-transparent focus:border-primary focus:outline-none"
             placeholder="Ask any question..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}></Input>

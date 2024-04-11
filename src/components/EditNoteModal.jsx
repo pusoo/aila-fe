@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Form, Input, Modal, message, Flex } from "antd";
+import { LuFileEdit } from "react-icons/lu";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import authAxios from "../api/authAxios";
@@ -54,14 +55,11 @@ const EditNoteModal = ({ transcription }) => {
 
   return (
     <>
-      <Button
-        onClick={showModal}
-        className="bg-primary hover:!bg-[#359EDD] hover:!text-white border-primary text-white h-9"
-      >
+      <Button onClick={showModal} className="border-0 bg-transparent hover:!bg-transparent !p-0 hover:!text-[#333333]">
         Edit Transcription
       </Button>
       <Modal
-        title="Edit"
+        title="Edit transcription"
         open={open}
         onCancel={handleCancel}
         cancelButtonProps={{
@@ -81,7 +79,7 @@ const EditNoteModal = ({ transcription }) => {
           autoComplete="off"
         >
           <Form.Item
-            label="Transcription"
+            label="Modifying the transcription will affect the summary and chatbot responses."
             name="transcription"
             rules={[
               {
@@ -93,7 +91,7 @@ const EditNoteModal = ({ transcription }) => {
             <Input.TextArea placeholder="Enter transcription" rows={10} />
           </Form.Item>
 
-          <Form.Item>
+          <Form.Item className="m-0">
             <Flex gap={10} className="flex justify-end">
               <Button
                 onClick={handleCancel}

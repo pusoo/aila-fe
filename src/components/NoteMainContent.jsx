@@ -64,7 +64,7 @@ const NoteMainContent = ({
         <div className="fixed left-0 top-1/2 z-40" onClick={toggleNoteTab}>
           {showNoteTab ? (
             <div
-              className="hidden sm:block py-4 px-0.5 rounded-r-2xl cursor-pointer bg-background"
+              className="hidden sm:block py-4 px-0.5 rounded-r-2xl cursor-pointer bg-background"  
               style={{
                 transform:
                   "translateX(272px) translateY(-50%) rotate(0deg) translateZ(0px)",
@@ -90,14 +90,14 @@ const NoteMainContent = ({
         </div>
         {selectedNote && (
           <div
-            className="hidden sm:block fixed right-0 top-1/2 z-40"
+            className="hidden sm:block fixed right-0 top-1/2 z-40" 
             onClick={toggleChatTab}>
             {showChatTab ? (
               <div
                 className="flex flex-col py-4 px-2 rounded-l-2xl group cursor-pointer transform transition-transform ease-in-out duration-300 "
                 style={{
                   transform:
-                    "translateX(-272px) translateY(-50%) translateZ(0px)",
+                    "translateX(-290px) translateY(-50%) translateZ(0px)",
                 }}>
                 <span className="bg-gray-200 group-hover:bg-gray-400 h-3.5 w-1 rounded-full group-hover:-rotate-[20deg] transition-transform ease-in-out duration-300 -mb-0.5"></span>
                 <span className="bg-gray-200 group-hover:bg-gray-400 h-3.5 w-1 rounded-full group-hover:rotate-[20deg] transition-transform ease-in-out duration-300 -mt-0.5"></span>

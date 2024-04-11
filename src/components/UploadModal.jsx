@@ -82,15 +82,13 @@ const UploadModal = () => {
 
   return (
     <>
-      <Button
-        type="dashed"
-        icon={<PlusOutlined/>}
+      <button
         onClick={showModal}
-        shape="circle"
-        className="flex flex-col justify-center items-center w-auto h-auto !py-[0.375rem] !px-1.5 text-[0.5rem] gap-1"
+        className="flex flex-col justify-center items-center w-auto h-auto !py-[0.375rem] !px-1.5 text-[0.5rem] gap-1.5 border border-dashed rounded-full bg-transparent border-primary text-primary hover:border-[#024264] hover:text-[#024264]"
       >
+        <PlusOutlined />
         Upload
-      </Button>
+      </button>
       <Modal
         title="Upload Image"
         open={open}

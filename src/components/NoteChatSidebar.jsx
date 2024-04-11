@@ -30,7 +30,7 @@ const NoteChatSidebar = ({ toggleTab }) => {
           vertical
           className="flex-1"
           style={{
-            width: isMobile ? "100%" : "264px",
+            width: isMobile ? "100%" : "280px",
             padding: isMobile ? "0px" : "16px",
             height: "100%",
             flexShrink: 0,
