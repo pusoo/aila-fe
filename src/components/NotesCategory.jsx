@@ -1,4 +1,4 @@
-import { Typography, Flex } from "antd";
+import { Typography, Flex, Spin } from "antd";
 import { Link } from "react-router-dom";
 
 import pdfIcon from "../assets/pdf-icon.png";
@@ -8,7 +8,7 @@ import useNoteContext from "../hooks/useNoteContext";
 
 const { Text } = Typography;
 
-const NotesCategory = () => {
+const NotesCategory = ({ handleDownloadPdf, isGeneratingPdf }) => {
   const { selectedNote } = useNoteContext();
 
   return (
@@ -27,17 +27,19 @@ const NotesCategory = () => {
         gap={20}
         className="w-full justify-center items-center flex-col sm:flex-row"
       >
-        <button className="flex items-center w-full h-full rounded-xl py-4 px-5 border-solid border-2 border-tertiary bg-transparent hover:border-primary">
+        <button className="flex items-center w-full h-full rounded-xl py-4 px-5 border-solid border-2 border-tertiary bg-transparent hover:border-primary" onClick={handleDownloadPdf} disabled={isGeneratingPdf}>
           <Flex
             align="center"
             gap={15}
             className=" flex-row sm:flex-col w-full"
           >
-            <img
+            {isGeneratingPdf ? <Spin className="w-6 h-6 sm:w-9 sm:h-9" /> : <img
               src={pdfIcon}
               alt="pdf icon"
               className="w-6 h-6 sm:w-9 sm:h-9"
             />
+            }
+
             <Flex vertical className="text-left sm:text-center">
               <Text strong>PDF</Text>
               <Text type="secondary leading-snug">

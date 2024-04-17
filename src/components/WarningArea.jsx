@@ -1,4 +1,4 @@
-import { Button, Flex, Menu, Dropdown } from "antd";
+import { Button, Menu, Dropdown } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import EditNoteModal from "./EditNoteModal";
 
@@ -9,7 +9,7 @@ const WarningArea = ({ transcription, onDelete }) => {
         <EditNoteModal transcription={transcription} />
       </Menu.Item>
       <Menu.Item key="2" onClick={onDelete}>
-        Delete Note
+        Archive
       </Menu.Item>
     </Menu>
   );

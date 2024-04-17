@@ -7,7 +7,6 @@ import { useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
 
 import {
-  FileOutlined,
   FolderOutlined,
   UnorderedListOutlined,
   UserOutlined,
@@ -81,9 +80,9 @@ const Navbar = () => {
                 </Link>
               </Menu.Item> */}
               <Menu.Item key="1">
-                <Link to="/media">
-                  <FolderOutlined className="text-primary mr-2" style={{fontSize: "16px"}} />
-                  Media
+                <Link to="/projects">
+                  <FolderOutlined className="text-primary mr-2" style={{ fontSize: "16px" }} />
+                  Projects
                 </Link>
               </Menu.Item>
               <Menu.Item key="2">
@@ -101,9 +100,8 @@ const Navbar = () => {
 
         <div className="block sm:hidden">
           <Header
-            className={`flex items-center px-8 ${
-              hasNotes ? "justify-end" : "justify-center"
-            } bg-background`}
+            className={`flex items-center px-8 ${hasNotes ? "justify-end" : "justify-center"
+              } bg-background`}
           >
             {hasNotes ? (
               <div className="w-[50vw] flex justify-between items-center">
@@ -148,7 +146,7 @@ const Navbar = () => {
               </Link>
             </Menu.Item> */}
             <Menu.Item key="1" style={{ padding: "0px" }}>
-              <Link to="/media">
+              <Link to="/projects">
                 <FolderOutlined
                   className="text-primary mr-2"
                   style={{ fontSize: "24px" }}

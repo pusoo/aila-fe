@@ -9,6 +9,7 @@ import Notes from "./pages/notes";
 import Media from "./pages/media";
 import Generate from "./pages/generate";
 import Error from "./pages/error";
+import VerifyEmailPage from "./pages/verify-email";
 
 const RequireAuth = ({ children }) => {
   const location = useLocation();
@@ -42,7 +43,7 @@ export default function App() {
       >
         <Route path="/notes" element={<Notes />} />
         <Route path="/" element={<Notes />} />
-        <Route path="/media" element={<Media />} />
+        <Route path="/projects" element={<Media />} />
         <Route path="/generate/:noteId" exact element={<Generate />} />
       </Route>
 
@@ -61,6 +62,16 @@ export default function App() {
         element={
           <CheckAuth>
             <Register />
+          </CheckAuth>
+        }
+      />
+
+      <Route
+        path="/verify-email"
+        exact
+        element={
+          <CheckAuth>
+            <VerifyEmailPage />
           </CheckAuth>
         }
       />

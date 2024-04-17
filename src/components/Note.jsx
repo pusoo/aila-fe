@@ -2,8 +2,9 @@ import { Button, Divider, Flex, Modal, message, Typography } from "antd";
 import moment from "moment";
 import YouTube from "react-youtube";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { CopyOutlined, EditOutlined, RedoOutlined } from "@ant-design/icons";
+import generatePDF, { Margin, Resolution, } from "react-to-pdf";
 
 import authAxios from "../api/authAxios";
 import { API_URL } from "../config";
@@ -15,6 +16,28 @@ import CreateNoteModal from "./CreateNoteModal";
 
 const { Text } = Typography;
 
+const options = {
+  method: 'open',
+  resolution: Resolution.HIGH,
+  page: {
+    margin: Margin.MEDIUM,
+    format: 'letter',
+    orientation: 'portrait',
+  },
+  canvas: {
+    mimeType: 'image/png',
+    qualityRatio: 1
+  },
+  overrides: {
+    pdf: {
+      compress: true
+    },
+    canvas: {
+      useCORS: true
+    }
+  },
+};
+
 const Note = () => {
   const queryClient = useQueryClient();
   const { setSelectedNote, selectedNote } = useNoteContext();
@@ -22,14 +45,28 @@ const Note = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [isSummaryLoading, setIsSummaryLoading] = useState(false);
+  const targetRef = useRef();
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
 
-  const mutation = useMutation({
+  const handleDownloadPdf = () => {
+    setIsGeneratingPdf(true);
+    generatePDF(targetRef, { ...options, filename: `${new Date()}.pdf` })
+      .then(() => setIsGeneratingPdf(false))
+      .catch(error => {
+        setIsGeneratingPdf(false);
+        console.error('Error generating PDF:', error);
+      });
+  };
+
+  const archivedMutation = useMutation({
     mutationFn: () => {
       if (!selectedNote._id) return;
-      return authAxios.delete(`${API_URL}/notes/${selectedNote._id}`);
+      return authAxios.post(`${API_URL}/notes/${selectedNote._id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notes"] });
+      queryClient.invalidateQueries({ queryKey: ["archive-notes"] });
+
     },
   });
 
@@ -70,35 +107,14 @@ const Note = () => {
   const handleDeleteNote = async () => {
     try {
       setIsLoading(true);
-      await mutation.mutateAsync();
+      await archivedMutation.mutateAsync();
       setSelectedNote(null);
-      message.success("Note deleted successfully!");
+      message.success("Note archived successfully!");
     } catch (err) {
-      message.error("Deleting of the note failed!");
+      message.error("Failed to archive the note!");
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleDelete = () => {
-    Modal.confirm({
-      title: "Delete note",
-      content: "Once deleted, notes cannot be recovered. Be careful.",
-      onOk: handleDeleteNote,
-      okButtonProps: {
-        isLoading,
-        disabled: isLoading,
-      },
-      cancelButtonProps: {
-        disabled: isLoading,
-      },
-      footer: (_, { OkBtn, CancelBtn }) => (
-        <>
-          <CancelBtn />
-          <OkBtn />
-        </>
-      ),
-    });
   };
 
   const handleSummarize = useCallback(async () => {
@@ -231,13 +247,18 @@ const Note = () => {
           >
             {selectedNote.title}
           </Typography.Title>
-          <Typography.Text className="text-gray-400">
-            Date: {moment(selectedNote.createdAt).format("MMM DD, YYYY")}
-          </Typography.Text>
+          <div className="flex gap-2">
+            <Typography.Text className="text-gray-400">
+              Date Created: {moment(selectedNote.createdAt).format("MMM DD, YYYY")}
+            </Typography.Text>
+            <Typography.Text className="text-gray-400">
+              Last Update: {moment(selectedNote.updatedAt).format("MMM DD, YYYY")}
+            </Typography.Text>
+          </div>
         </Flex>
         <WarningArea
           transcription={(response && response.transcription) || ""}
-          onDelete={handleDelete}
+          onDelete={handleDeleteNote}
         />
       </Flex>
 
@@ -261,61 +282,55 @@ const Note = () => {
         <p>Summary is still processing..</p>
       ) : (
         selectedNote.summary && (
-          <>
-            <Flex vertical>
-              <Text strong style={{ marginBottom: "15px", color: "#8C8F92" }}>
+          <Flex className="bg-white rounded-lg p-5 border-solid border-2 border-tertiary">
+            <div className="flex-1" ref={targetRef}>
+              <Text strong style={{ marginBottom: "20px", color: "#8C8F92" }}>
                 Summary
               </Text>
-              <Flex className="bg-white rounded-lg p-5 border-solid border-2 border-tertiary">
-                <div className="flex-1">
-                  <p>{selectedNote.summary}</p>
-                </div>
-                <Flex vertical className="pl-2">
-                  <Button type="text" className="p-0">
-                    <CopyOutlined
-                      onClick={copyTextToClipboard}
-                      className="text-gray-400 text-base"
-                    />
-                  </Button>
-                  <Button
-                    type="text"
-                    onClick={() => {
-                      if (selectedNote.summary) {
-                        Modal.confirm({
-                          title: "Summarize notes",
-                          content:
-                            "Are you certain of your intention to re-summarize your transcription? This action will result in the loss of the current summary.",
-                          onOk: handleSummarize,
-                          footer: (_, { OkBtn, CancelBtn }) => (
-                            <>
-                              <CancelBtn />
-                              <OkBtn />
-                            </>
-                          ),
-                        });
-                        return;
-                      }
-                      handleSummarize();
-                    }}
-                    className="p-0"
-                  >
-                    <RedoOutlined className="text-gray-400 text-base" />
-                  </Button>
-                </Flex>
-              </Flex>
+              <p style={{ width: '100%' }}>{selectedNote.summary}</p>
+            </div>
+            <Flex vertical className="pl-2">
+              <Button type="text" className="p-0">
+                <CopyOutlined
+                  onClick={copyTextToClipboard}
+                  className="text-gray-400 text-base"
+                />
+              </Button>
+              <Button
+                type="text"
+                onClick={() => {
+                  if (selectedNote.summary) {
+                    Modal.confirm({
+                      title: "Summarize notes",
+                      content:
+                        "Are you certain of your intention to re-summarize your transcription? This action will result in the loss of the current summary.",
+                      onOk: handleSummarize,
+                      footer: (_, { OkBtn, CancelBtn }) => (
+                        <>
+                          <CancelBtn />
+                          <OkBtn />
+                        </>
+                      ),
+                    });
+                    return;
+                  }
+                  handleSummarize();
+                }}
+                className="p-0"
+              >
+                <RedoOutlined className="text-gray-400 text-base" />
+              </Button>
             </Flex>
-          </>
+          </Flex>
         )
       )}
-
       <Divider />
 
-      <NotesCategory />
-
+      <NotesCategory handleDownloadPdf={handleDownloadPdf} isGeneratingPdf={isGeneratingPdf} />
       <Divider className="border-none m-3" />
 
       <Files />
-    </Flex>
+    </Flex >
   );
 };
 

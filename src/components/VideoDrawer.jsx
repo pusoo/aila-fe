@@ -67,6 +67,7 @@ function VideoDrawer({ note, setNote }) {
         !note._id
       )
         return;
+      // TODO add message when incomplete data
       const payload = {
         photoId: selectedAvatar.photoId,
         summary: note.summary,
@@ -156,22 +157,21 @@ function VideoDrawer({ note, setNote }) {
           <Typography.Paragraph className="!mb-2 !text-base sm:!text-sm">
             Avatar
           </Typography.Paragraph>
-          <div className="h-14 opacity-90 flex items-center gap-2 rounded-lg px-2" style={{border: "1px solid #40A9E8"}}>
+          <div className="h-14 opacity-90 flex items-center gap-2 rounded-lg px-2" style={{ border: "1px solid #40A9E8" }}>
             <div className="flex gap-3">
               {avatars && Array.isArray(avatars.results)
                 ? avatars.results.map((avatar) => (
-                    <Avatar
-                      key={avatar._id}
-                      size={40}
-                      src={avatar.url}
-                      onClick={() => setSelectedAvatar(avatar)}
-                      className={`${
-                        selectedAvatar && selectedAvatar._id === avatar._id
-                          ? "border-primary border-6"
-                          : ""
+                  <Avatar
+                    key={avatar._id}
+                    size={40}
+                    src={avatar.url}
+                    onClick={() => setSelectedAvatar(avatar)}
+                    className={`${selectedAvatar && selectedAvatar._id === avatar._id
+                      ? "border-primary border-6"
+                      : ""
                       }`}
-                    ></Avatar>
-                  ))
+                  ></Avatar>
+                ))
                 : null}
             </div>
             <UploadModal />
