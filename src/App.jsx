@@ -10,6 +10,7 @@ import Media from "./pages/media";
 import Generate from "./pages/generate";
 import Error from "./pages/error";
 import VerifyEmailPage from "./pages/verify-email";
+import ProfilePage from "./pages/profile";
 
 const RequireAuth = ({ children }) => {
   const location = useLocation();
@@ -45,6 +46,7 @@ export default function App() {
         <Route path="/" element={<Notes />} />
         <Route path="/projects" element={<Media />} />
         <Route path="/generate/:noteId" exact element={<Generate />} />
+        <Route path="/profile" element={<ProfilePage />} />
       </Route>
 
       <Route

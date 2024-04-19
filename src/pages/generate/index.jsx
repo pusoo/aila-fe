@@ -1,10 +1,9 @@
 import {
-  Link,
   useNavigate,
   useParams,
   useSearchParams,
 } from "react-router-dom";
-import { Button, Layout } from "antd";
+import { Button, Layout, Typography } from "antd";
 import { LeftOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -17,7 +16,6 @@ import VideoDrawer from "../../components/VideoDrawer";
 import GenerateVideoContent from "../../components/GenerateVideoContent";
 import AudioDrawer from "../../components/AudioDrawer";
 import GenerateAudioContent from "../../components/GenerateAudioContent";
-import logo from "../../assets/aila-logo.svg";
 
 const Generate = () => {
   const navigate = useNavigate();
@@ -30,8 +28,6 @@ const Generate = () => {
   const [currentNote, setCurrentNote] = useState(null);
   const [showTab, setShowTab] = useState(true);
   const [isComplete, setIsComplete] = useState(false);
-  const [isFetching, setIsFetching] = useState(false);
-  const [mediaVideo, setMediaVideo] = useState(null);
 
   const { data: note } = useQuery({
     queryKey: ["notes", noteId],
@@ -42,12 +38,26 @@ const Generate = () => {
     staleTime: 0,
   });
 
-  const { data: response } = useQuery({
+  const { data: videoStatus } = useQuery({
     queryKey: ["video-status", noteId],
     queryFn: async () => {
       if (!note.media && !note.media.video && !note.media.video.media) return;
       const { data } = await authAxios.get(
         `${API_URL}/heygens/${note.media.video.media}/status`
+      );
+      return data;
+    },
+    staleTime: 0,
+    refetchInterval: isComplete === false ? 2000 : false,
+    enabled: isComplete === false,
+  });
+
+  const { data: audioStatus } = useQuery({
+    queryKey: ["audio-status", noteId],
+    queryFn: async () => {
+      if (!note.media && !note.media.audio && !note.media.audio.media) return;
+      const { data } = await authAxios.get(
+        `${API_URL}/heygens/${note.media.audio.media}/status`
       );
       return data;
     },
@@ -69,27 +79,35 @@ const Generate = () => {
     enabled: isComplete,
   });
 
+  const { data: audio } = useQuery({
+    queryKey: ["audio", noteId],
+    queryFn: async () => {
+      if (!note.media && !note.media.audio && !note.media.audio.media) return;
+      const { data } = await authAxios.get(
+        `${API_URL}/medias/${note.media.audio.media}`
+      );
+      return data;
+    },
+    staleTime: 0,
+    enabled: isComplete,
+  });
+
   useEffect(() => {
-    if (response && response.status === "completed") {
+    if (genType === "video" && videoStatus && videoStatus.status === "completed") {
       setIsComplete(true);
-      setIsFetching(true);
-    } else {
-      setIsComplete(false);
-      setIsFetching(false);
+    } else if (genType === "audio" && audioStatus && audioStatus.status === "completed") {
+      setIsComplete(true);
     }
-  }, [response]);
+    else {
+      setIsComplete(false);
+    }
+  }, [audioStatus, genType, videoStatus]);
 
   useEffect(() => {
     if (note) {
       setCurrentNote(note);
     }
   }, [note]);
-
-  useEffect(() => {
-    if (video) {
-      setMediaVideo(video);
-    }
-  }, [video]);
 
   if (!note) {
     return <>No notes</>;
@@ -113,49 +131,59 @@ const Generate = () => {
       </Header>
 
       <div className="flex flex-1 w-full bg-generateBackground">
-        <Sidebar showTab={showTab} width={"320px"} toggleTab={toggleTab}>
-          <div className="flex h-full">
-            {genType === "audio" ? (
-              <AudioDrawer />
-            ) : (
-              <VideoDrawer note={currentNote} setNote={setCurrentNote} />
-            )}
-          </div>
-        </Sidebar>
-        <div className="flex-1 flex flex-col relative">
-          {genType === "audio" ? (
-            <GenerateAudioContent />
-          ) : (
-            <GenerateVideoContent
-              note={currentNote}
-              setNote={setCurrentNote}
-              video={mediaVideo}
-            />
-          )}
-          <div className="fixed left-0 top-1/2 z-40" onClick={toggleTab}>
-            {showTab ? (
-              <div
-                className="hidden sm:block py-4 px-0.5 rounded-r-2xl cursor-pointer bg-white"
-                style={{
-                  transform:
-                    "translateX(328px) translateY(-50%) rotate(0deg) translateZ(0px)",
-                }}
-              >
-                <LeftOutlined className="text-[#C5C9CA] text-xs" />
+        {videoStatus && videoStatus.status === "processing" || audioStatus && audioStatus.status === "processing" ? <div className="flex items-center justify-center flex-1">
+          <Typography.Title>{genType === "audio" ? "Generating Audio.." : "Generating Video.."}</Typography.Title>
+        </div> :
+          <>
+            <Sidebar showTab={showTab} width={"320px"} toggleTab={toggleTab}>
+              <div className="flex h-full">
+                {genType === "audio" ? (
+                  <AudioDrawer note={currentNote} setNote={setCurrentNote} />
+                ) : (
+                  <VideoDrawer note={currentNote} setNote={setCurrentNote} />
+                )}
               </div>
-            ) : (
-              <div
-                className="py-5 px-0.5 rounded-l-2xl cursor-pointer bg-white"
-                style={{
-                  transform:
-                    "translateX(0px) translateY(-50%) rotate(180deg) translateZ(0px)",
-                }}
-              >
-                <LeftOutlined className="text-[#C5C9CA] text-xs" />
+            </Sidebar>
+            <div className="flex-1 flex flex-col relative">
+              {genType === "audio" ? (
+                <GenerateAudioContent
+                  note={currentNote}
+                  setNote={setCurrentNote}
+                  audio={audio}
+
+                />
+              ) : (
+                <GenerateVideoContent
+                  note={currentNote}
+                  setNote={setCurrentNote}
+                  video={video}
+                />
+              )}
+              <div className="fixed left-0 top-1/2 z-40" onClick={toggleTab}>
+                {showTab ? (
+                  <div
+                    className="hidden sm:block py-4 px-0.5 rounded-r-2xl cursor-pointer bg-white"
+                    style={{
+                      transform:
+                        "translateX(328px) translateY(-50%) rotate(0deg) translateZ(0px)",
+                    }}
+                  >
+                    <LeftOutlined className="text-[#C5C9CA] text-xs" />
+                  </div>
+                ) : (
+                  <div
+                    className="py-5 px-0.5 rounded-l-2xl cursor-pointer bg-white"
+                    style={{
+                      transform:
+                        "translateX(0px) translateY(-50%) rotate(180deg) translateZ(0px)",
+                    }}
+                  >
+                    <LeftOutlined className="text-[#C5C9CA] text-xs" />
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        </div>
+            </div>
+          </>}
       </div>
     </div>
   );

@@ -33,8 +33,13 @@ const Navbar = () => {
 
   const logoutMutation = useMutation({
     mutationFn: () => {
+      localStorage.removeItem(TOKEN_KEY)
       return authAxios.post(`${API_URL}/auth/logout`, { refreshToken });
     },
+    onSuccess: () => {
+      localStorage.removeItem(TOKEN_KEY);
+      window.location.href = "/signin"
+    }
   });
 
   const handleLogout = async () => {
@@ -88,7 +93,7 @@ const Navbar = () => {
               <Menu.Item key="2">
                 <Dropdown menu={{ items }}>
                   <Space>
-                    <a onClick={() => console.info("click profile")}>
+                    <a onClick={() => navigate("/profile")}>
                       <Avatar icon={<UserOutlined />} />
                     </a>
                   </Space>

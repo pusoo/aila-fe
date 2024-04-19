@@ -282,53 +282,54 @@ const Note = () => {
         <p>Summary is still processing..</p>
       ) : (
         selectedNote.summary && (
-          <Flex className="bg-white rounded-lg p-5 border-solid border-2 border-tertiary">
-            <div className="flex-1" ref={targetRef}>
-              <Text strong style={{ marginBottom: "20px", color: "#8C8F92" }}>
-                Summary
-              </Text>
-              <p style={{ width: '100%' }}>{selectedNote.summary}</p>
-            </div>
-            <Flex vertical className="pl-2">
-              <Button type="text" className="p-0">
-                <CopyOutlined
-                  onClick={copyTextToClipboard}
-                  className="text-gray-400 text-base"
-                />
-              </Button>
-              <Button
-                type="text"
-                onClick={() => {
-                  if (selectedNote.summary) {
-                    Modal.confirm({
-                      title: "Summarize notes",
-                      content:
-                        "Are you certain of your intention to re-summarize your transcription? This action will result in the loss of the current summary.",
-                      onOk: handleSummarize,
-                      footer: (_, { OkBtn, CancelBtn }) => (
-                        <>
-                          <CancelBtn />
-                          <OkBtn />
-                        </>
-                      ),
-                    });
-                    return;
-                  }
-                  handleSummarize();
-                }}
-                className="p-0"
-              >
-                <RedoOutlined className="text-gray-400 text-base" />
-              </Button>
+          <>
+
+            <Flex className="bg-white rounded-lg p-5 border-solid border-2 border-tertiary">
+              <div className="flex-1" ref={targetRef}>
+                <Text strong style={{ marginBottom: "20px", color: "#8C8F92" }}>
+                  Summary
+                </Text>
+                <p style={{ width: '100%' }}>{selectedNote.summary}</p>
+              </div>
+              <Flex vertical className="pl-2">
+                <Button type="text" className="p-0">
+                  <CopyOutlined
+                    onClick={copyTextToClipboard}
+                    className="text-gray-400 text-base"
+                  />
+                </Button>
+                <Button
+                  type="text"
+                  onClick={() => {
+                    if (selectedNote.summary) {
+                      Modal.confirm({
+                        title: "Summarize notes",
+                        content:
+                          "Are you certain of your intention to re-summarize your transcription? This action will result in the loss of the current summary.",
+                        onOk: handleSummarize,
+                        footer: (_, { OkBtn, CancelBtn }) => (
+                          <>
+                            <CancelBtn />
+                            <OkBtn />
+                          </>
+                        ),
+                      });
+                      return;
+                    }
+                    handleSummarize();
+                  }}
+                  className="p-0"
+                >
+                  <RedoOutlined className="text-gray-400 text-base" />
+                </Button>
+              </Flex>
             </Flex>
-          </Flex>
+            <Divider />
+            <NotesCategory handleDownloadPdf={handleDownloadPdf} isGeneratingPdf={isGeneratingPdf} />
+          </>
         )
       )}
-      <Divider />
-
-      <NotesCategory handleDownloadPdf={handleDownloadPdf} isGeneratingPdf={isGeneratingPdf} />
       <Divider className="border-none m-3" />
-
       <Files />
     </Flex >
   );

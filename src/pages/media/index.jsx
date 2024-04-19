@@ -1,5 +1,4 @@
-import { Button, Modal, Segmented, Space, Table, Typography, message } from "antd";
-import EmptyMedia from "../../components/EmptyMedia";
+import { Button, Card, Col, Modal, Row, Segmented, Space, Table, Typography, message } from "antd";
 import { useState } from "react";
 import { Header } from "antd/es/layout/layout";
 import { useNavigate } from "react-router-dom";
@@ -9,9 +8,8 @@ import authAxios from "../../api/authAxios";
 import { API_URL } from "../../config";
 const { Title } = Typography;
 
-
 const Media = () => {
-  const [value, setValue] = useState("All");
+  const [value, setValue] = useState("Audios");
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -20,6 +18,14 @@ const Media = () => {
     queryFn: async () => {
       const filter = JSON.stringify({ isArchived: true })
       const { data } = await authAxios.get(`${API_URL}/notes?limit=1000&filter=${filter}`)
+      return data.results;
+    },
+  });
+
+  const { data: medias } = useQuery({
+    queryKey: ["medias"],
+    queryFn: async () => {
+      const { data } = await authAxios.get(`${API_URL}/medias?limit=1000&populate=note`)
       return data.results;
     },
   });
@@ -116,16 +122,8 @@ const Media = () => {
           className="p-2 border rounded-xl border-tertiary border-solid bg-transparent"
           options={[
             {
-              label: <span className="px-2 py-1 rounded-xl">All</span>,
-              value: "All",
-            },
-            {
-              label: <span className="px-2 py-1 rounded-xl">Files</span>,
-              value: "Files",
-            },
-            {
-              label: <span className="px-2 py-1 rounded-xl">Podcasts</span>,
-              value: "Podcasts",
+              label: <span className="px-2 py-1 rounded-xl">Audios</span>,
+              value: "Audios",
             },
             {
               label: <span className="px-2 py-1 rounded-xl">Videos</span>,
@@ -141,7 +139,43 @@ const Media = () => {
             setValue(value);
           }}
         />
-        {value === "Archived" ? <Table dataSource={notes} columns={columns} className="py-5" /> : <EmptyMedia />}
+        {value === "Archived" && <Table dataSource={notes} columns={columns} className="py-5" />}
+        {value === "Videos" && <Row className="gap-5 py-5">
+          {Array.isArray(medias) && medias.filter(media => media.url && media.type === "video").map(media => {
+            return (
+              <Col span={6} key={media._id}>
+                <video
+                  autoPlay={false}
+                  controls={true}
+                  className="w-full rounded shadow-md border-1 border-slate-300"
+                >
+                  <source src={media.url} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              </Col>
+            )
+          })}
+        </Row>}
+        {value === "Audios" && <Row className="gap-5 py-5">
+          {Array.isArray(medias) && medias.filter(media => media.url && media.type === "audio").map(media => {
+            return (
+              <Col span={6} key={media._id}>
+                <Card>
+                  <Typography.Title level={5}>Note: {media.note && media.note.title}</Typography.Title>
+                  <audio
+                    autoPlay={false}
+                    controls={true}
+                    className="w-full border-1 border-slate-300"
+                  >
+                    <source src={media.url} type="audio/ogg" />
+                    <source src={media.url} type="audio/mpeg" />
+                    Your browser does not support the video tag.
+                  </audio>
+                </Card>
+              </Col>
+            )
+          })}
+        </Row>}
 
       </div>
     </>

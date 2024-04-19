@@ -3,10 +3,10 @@ import {
   Avatar,
   Button,
   Input,
-  Slider,
   Typography,
-  // ColorPicker,
+  message,
 } from "antd";
+import { CloseCircleOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import authAxios from "../api/authAxios";
@@ -19,7 +19,6 @@ import VoiceModal from "./VoicesModal";
 function VideoDrawer({ note, setNote }) {
   const [selectedVoice, setSelectedVoice] = useState(null);
   const [selectedAvatar, setSelectedAvatar] = useState(null);
-
   const { data: avatars } = useQuery({
     queryKey: ["avatars"],
     queryFn: async () => {
@@ -58,6 +57,16 @@ function VideoDrawer({ note, setNote }) {
     },
   });
 
+  const deleteVideoMutation = useMutation({
+    mutationFn: (id) => {
+      return authAxios.delete(`${API_URL}/talkingPhotos/${id}`);
+    },
+    onSuccess: () => {
+      message.success("Successfully deleted!")
+      queryClient.invalidateQueries({ queryKey: ["avatars"] });
+    },
+  });
+
   const handleGenerateVideo = async () => {
     try {
       if (
@@ -65,8 +74,10 @@ function VideoDrawer({ note, setNote }) {
         !note.summary &&
         !selectedVoice.voice_id &&
         !note._id
-      )
+      ) {
+        message.error("Please select a photo and voice")
         return;
+      }
       // TODO add message when incomplete data
       const payload = {
         photoId: selectedAvatar.photoId,
@@ -126,7 +137,7 @@ function VideoDrawer({ note, setNote }) {
               setSelectedVoice={setSelectedVoice}
             />
           </Flex>
-
+          {/*
           <Flex vertical>
             <div className="flex gap-3 justify-center items-center">
               <Typography.Paragraph className="!mb-2 !text-base sm:!text-sm">
@@ -151,7 +162,7 @@ function VideoDrawer({ note, setNote }) {
                 className="flex-1"
               />
             </div>
-          </Flex>
+          </Flex> */}
         </Flex>
         <div>
           <Typography.Paragraph className="!mb-2 !text-base sm:!text-sm">
@@ -161,16 +172,18 @@ function VideoDrawer({ note, setNote }) {
             <div className="flex gap-3">
               {avatars && Array.isArray(avatars.results)
                 ? avatars.results.map((avatar) => (
-                  <Avatar
-                    key={avatar._id}
-                    size={40}
-                    src={avatar.url}
-                    onClick={() => setSelectedAvatar(avatar)}
-                    className={`${selectedAvatar && selectedAvatar._id === avatar._id
-                      ? "border-primary border-6"
-                      : ""
-                      }`}
-                  ></Avatar>
+                  <div key={avatar._id} className="relative">
+                    <Avatar
+                      size={40}
+                      src={avatar.url}
+                      onClick={() => setSelectedAvatar(avatar)}
+                      className={`${selectedAvatar && selectedAvatar._id === avatar._id
+                        ? "border-primary border-6"
+                        : ""
+                        }`}
+                    ></Avatar>
+                    <CloseCircleOutlined className="text-md text-red-500 hover:text-red-700 bg-white rounded-full top-0 right-0 absolute cursor-pointer" onClick={() => deleteVideoMutation.mutateAsync(avatar._id)} />
+                  </div>
                 ))
                 : null}
             </div>
