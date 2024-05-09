@@ -4,7 +4,7 @@ import YouTube from "react-youtube";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CopyOutlined, EditOutlined, RedoOutlined } from "@ant-design/icons";
-import generatePDF, { Margin, Resolution, } from "react-to-pdf";
+import generatePDF, { Margin, Resolution } from "react-to-pdf";
 
 import authAxios from "../api/authAxios";
 import { API_URL } from "../config";
@@ -17,24 +17,24 @@ import CreateNoteModal from "./CreateNoteModal";
 const { Text } = Typography;
 
 const options = {
-  method: 'open',
+  method: "open",
   resolution: Resolution.HIGH,
   page: {
     margin: Margin.MEDIUM,
-    format: 'letter',
-    orientation: 'portrait',
+    format: "letter",
+    orientation: "portrait",
   },
   canvas: {
-    mimeType: 'image/png',
-    qualityRatio: 1
+    mimeType: "image/png",
+    qualityRatio: 1,
   },
   overrides: {
     pdf: {
-      compress: true
+      compress: true,
     },
     canvas: {
-      useCORS: true
-    }
+      useCORS: true,
+    },
   },
 };
 
@@ -52,9 +52,9 @@ const Note = () => {
     setIsGeneratingPdf(true);
     generatePDF(targetRef, { ...options, filename: `${new Date()}.pdf` })
       .then(() => setIsGeneratingPdf(false))
-      .catch(error => {
+      .catch((error) => {
         setIsGeneratingPdf(false);
-        console.error('Error generating PDF:', error);
+        console.error("Error generating PDF:", error);
       });
   };
 
@@ -66,7 +66,6 @@ const Note = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notes"] });
       queryClient.invalidateQueries({ queryKey: ["archive-notes"] });
-
     },
   });
 
@@ -247,12 +246,14 @@ const Note = () => {
           >
             {selectedNote.title}
           </Typography.Title>
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-1">
             <Typography.Text className="text-gray-400">
-              Date Created: {moment(selectedNote.createdAt).format("MMM DD, YYYY")}
+              Date Created:
+              {moment(selectedNote.createdAt).format("MMM DD, YYYY")}
             </Typography.Text>
             <Typography.Text className="text-gray-400">
-              Last Update: {moment(selectedNote.updatedAt).format("MMM DD, YYYY")}
+              Last Update:
+              {moment(selectedNote.updatedAt).format("MMM DD, YYYY")}
             </Typography.Text>
           </div>
         </Flex>
@@ -272,7 +273,7 @@ const Note = () => {
             </Text>
           </>
         )}
-        <div>{renderMedia()}</div>
+        <div className="flex justify-center items-center">{renderMedia()}</div>
       </Flex>
 
       <Divider className="border-none m-3" />
@@ -283,13 +284,12 @@ const Note = () => {
       ) : (
         selectedNote.summary && (
           <>
-
             <Flex className="bg-white rounded-lg p-5 border-solid border-2 border-tertiary">
               <div className="flex-1" ref={targetRef}>
                 <Text strong style={{ marginBottom: "20px", color: "#8C8F92" }}>
                   Summary
                 </Text>
-                <p style={{ width: '100%' }}>{selectedNote.summary}</p>
+                <p style={{ width: "100%" }}>{selectedNote.summary}</p>
               </div>
               <Flex vertical className="pl-2">
                 <Button type="text" className="p-0">
@@ -325,13 +325,16 @@ const Note = () => {
               </Flex>
             </Flex>
             <Divider />
-            <NotesCategory handleDownloadPdf={handleDownloadPdf} isGeneratingPdf={isGeneratingPdf} />
+            <NotesCategory
+              handleDownloadPdf={handleDownloadPdf}
+              isGeneratingPdf={isGeneratingPdf}
+            />
           </>
         )
       )}
       <Divider className="border-none m-3" />
-      <Files />
-    </Flex >
+      {/* <Files /> */}
+    </Flex>
   );
 };
 

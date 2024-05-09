@@ -239,7 +239,7 @@ function ChatBox({ note }) {
               (mutation && mutation.isPending) ||
               (dataMessages && dataMessages.isPending)
             }
-            className="absolute bottom-[0.375rem] sm:bottom-[1.0625rem] right-1 sm:right-4 rounded-lg border p-0.5 text-white transition-colors pointer-events-none"
+            className="absolute bottom-[0.375rem] sm:bottom-[1.0625rem] right-1 sm:right-4 rounded-lg border p-0.5 text-white transition-colors"
           />
         </Flex>
       </form>

@@ -12,7 +12,7 @@ const NotesCategory = ({ handleDownloadPdf, isGeneratingPdf }) => {
   const { selectedNote } = useNoteContext();
 
   return (
-    <div className="w-full justify-center items-center flex-col h-full flex">
+    <div className="w-full justify-center items-center flex-col h-full flex pb-7">
       <Text
         strong
         style={{
@@ -28,7 +28,7 @@ const NotesCategory = ({ handleDownloadPdf, isGeneratingPdf }) => {
         className="w-full justify-center items-center flex-col sm:flex-row"
       >
         <button
-          className="flex items-center w-full h-full rounded-xl py-4 px-5 border-solid border-2 border-tertiary bg-transparent hover:border-primary pointer-events-none"
+          className="flex items-center w-full h-full rounded-xl py-4 px-5 border-solid border-2 border-tertiary bg-transparent hover:border-primary"
           onClick={handleDownloadPdf}
           disabled={isGeneratingPdf}
         >
@@ -57,7 +57,7 @@ const NotesCategory = ({ handleDownloadPdf, isGeneratingPdf }) => {
         </button>
         <Link
           to={`/generate/${selectedNote._id}?type=audio`}
-          className="flex justify-center w-full h-full pointer-events-none"
+          className="flex justify-center w-full h-full"
             
         >
           <button className="items-center w-full h-full rounded-xl py-4 px-5 border-solid border-2 border-tertiary bg-transparent hover:border-primary">
@@ -78,7 +78,7 @@ const NotesCategory = ({ handleDownloadPdf, isGeneratingPdf }) => {
         </Link>
         <Link
           to={`/generate/${selectedNote._id}?type=video`}
-          className="flex justify-center w-full h-full pointer-events-none"
+          className="flex justify-center w-full h-full"
         >
           <button className="items-center w-full h-full rounded-xl py-4 px-5 border-solid border-2 border-tertiary bg-transparent hover:border-primary">
             <Flex align="center" gap={15} className="flex-row sm:flex-col">
