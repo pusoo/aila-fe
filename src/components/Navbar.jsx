@@ -169,7 +169,7 @@ const Navbar = () => {
             </Menu.Item>
             <Menu.Item
               key="2"
-              onClick={() => console.info("click profile")}
+              onClick={() => navigate("/profile")}
               style={{
                 display: "flex",
                 padding: "0px",
@@ -179,7 +179,7 @@ const Navbar = () => {
                 className="text-primary mr-2"
                 style={{ fontSize: "24px" }}
               />
-              My Account
+              Profile
             </Menu.Item>
             <Menu.Item
               key="3"

@@ -143,7 +143,7 @@ const Media = () => {
         {value === "Videos" && <Row className="gap-5 py-5">
           {Array.isArray(medias) && medias.filter(media => media.url && media.type === "video").map(media => {
             return (
-              <Col span={6} key={media._id}>
+              <Col xs={24} sm={6} key={media._id}>
                 <video
                   autoPlay={false}
                   controls={true}
@@ -159,7 +159,7 @@ const Media = () => {
         {value === "Audios" && <Row className="gap-5 py-5">
           {Array.isArray(medias) && medias.filter(media => media.url && media.type === "audio").map(media => {
             return (
-              <Col span={6} key={media._id}>
+              <Col xs={24} sm={6} key={media._id}>
                 <Card>
                   <Typography.Title level={5}>Note: {media.note && media.note.title}</Typography.Title>
                   <audio
