@@ -31,7 +31,7 @@ const NoteSidebar = () => {
                 setSelectedNote(note);
               }}
             >
-              <Typography.Title level={5} className="!mb-0">
+              <Typography.Title level={5} className="!mb-0 truncate w-[11rem]">
                 {note.title}
               </Typography.Title>
             </Card>

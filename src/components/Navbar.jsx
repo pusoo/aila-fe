@@ -33,13 +33,13 @@ const Navbar = () => {
 
   const logoutMutation = useMutation({
     mutationFn: () => {
-      localStorage.removeItem(TOKEN_KEY)
+      localStorage.removeItem(TOKEN_KEY);
       return authAxios.post(`${API_URL}/auth/logout`, { refreshToken });
     },
     onSuccess: () => {
       localStorage.removeItem(TOKEN_KEY);
-      window.location.href = "/signin"
-    }
+      window.location.href = "/signin";
+    },
   });
 
   const handleLogout = async () => {
@@ -63,6 +63,10 @@ const Navbar = () => {
   const items = [
     {
       key: "1",
+      label: <span onClick={() => navigate("/profile")}>Profile</span>,
+    },
+    {
+      key: "2",
       label: <span onClick={handleLogout}>Logout</span>,
     },
   ];
@@ -86,14 +90,17 @@ const Navbar = () => {
               </Menu.Item> */}
               <Menu.Item key="1">
                 <Link to="/projects">
-                  <FolderOutlined className="text-primary mr-2" style={{ fontSize: "16px" }} />
+                  <FolderOutlined
+                    className="text-primary mr-2"
+                    style={{ fontSize: "16px" }}
+                  />
                   Projects
                 </Link>
               </Menu.Item>
               <Menu.Item key="2">
                 <Dropdown menu={{ items }}>
                   <Space>
-                    <a onClick={() => navigate("/profile")}>
+                    <a>
                       <Avatar icon={<UserOutlined />} />
                     </a>
                   </Space>
@@ -105,8 +112,9 @@ const Navbar = () => {
 
         <div className="block sm:hidden">
           <Header
-            className={`flex items-center px-8 ${hasNotes ? "justify-end" : "justify-center"
-              } bg-background`}
+            className={`flex items-center px-8 ${
+              hasNotes ? "justify-end" : "justify-center"
+            } bg-background`}
           >
             {hasNotes ? (
               <div className="w-[50vw] flex justify-between items-center">
@@ -156,11 +164,12 @@ const Navbar = () => {
                   className="text-primary mr-2"
                   style={{ fontSize: "24px" }}
                 />
-                Media
+                Projects
               </Link>
             </Menu.Item>
-            <Menu.Item key="2"
-              onClick={() => console.info("click profile")}
+            <Menu.Item
+              key="2"
+              onClick={() => navigate("/profile")}
               style={{
                 display: "flex",
                 padding: "0px",
@@ -170,7 +179,7 @@ const Navbar = () => {
                 className="text-primary mr-2"
                 style={{ fontSize: "24px" }}
               />
-              My Account
+              Profile
             </Menu.Item>
             <Menu.Item
               key="3"

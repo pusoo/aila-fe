@@ -12,7 +12,7 @@ const NotesCategory = ({ handleDownloadPdf, isGeneratingPdf }) => {
   const { selectedNote } = useNoteContext();
 
   return (
-    <div className="w-full justify-center items-center flex-col h-full flex">
+    <div className="w-full justify-center items-center flex-col h-full flex pb-7">
       <Text
         strong
         style={{
@@ -27,18 +27,25 @@ const NotesCategory = ({ handleDownloadPdf, isGeneratingPdf }) => {
         gap={20}
         className="w-full justify-center items-center flex-col sm:flex-row"
       >
-        <button className="flex items-center w-full h-full rounded-xl py-4 px-5 border-solid border-2 border-tertiary bg-transparent hover:border-primary" onClick={handleDownloadPdf} disabled={isGeneratingPdf}>
+        <button
+          className="flex items-center w-full h-full rounded-xl py-4 px-5 border-solid border-2 border-tertiary bg-transparent hover:border-primary"
+          onClick={handleDownloadPdf}
+          disabled={isGeneratingPdf}
+        >
           <Flex
             align="center"
             gap={15}
             className=" flex-row sm:flex-col w-full"
           >
-            {isGeneratingPdf ? <Spin className="w-6 h-6 sm:w-9 sm:h-9" /> : <img
-              src={pdfIcon}
-              alt="pdf icon"
-              className="w-6 h-6 sm:w-9 sm:h-9"
-            />
-            }
+            {isGeneratingPdf ? (
+              <Spin className="w-6 h-6 sm:w-9 sm:h-9" />
+            ) : (
+              <img
+                src={pdfIcon}
+                alt="pdf icon"
+                className="w-6 h-6 sm:w-9 sm:h-9"
+              />
+            )}
 
             <Flex vertical className="text-left sm:text-center">
               <Text strong>PDF</Text>
@@ -51,6 +58,7 @@ const NotesCategory = ({ handleDownloadPdf, isGeneratingPdf }) => {
         <Link
           to={`/generate/${selectedNote._id}?type=audio`}
           className="flex justify-center w-full h-full"
+            
         >
           <button className="items-center w-full h-full rounded-xl py-4 px-5 border-solid border-2 border-tertiary bg-transparent hover:border-primary">
             <Flex align="center" gap={15} className="flex-row sm:flex-col">
