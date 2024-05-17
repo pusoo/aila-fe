@@ -1,11 +1,11 @@
 import { Avatar, Drawer, Dropdown, Layout, Menu, Space } from "antd";
 import { Link, useLocation } from "react-router-dom";
-import logo from "../assets/aila-logo.svg";
-import useNoteContext from "../hooks/useNoteContext";
 import { useNavigate } from "react-router";
 import { useMutation } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useState } from "react";
 
+import logo from "../assets/aila-logo.svg";
+import useNoteContext from "../hooks/useNoteContext";
 import {
   FolderOutlined,
   UnorderedListOutlined,
@@ -13,7 +13,6 @@ import {
   LogoutOutlined,
 } from "@ant-design/icons";
 import aila from "../assets/aila.svg";
-import { useState } from "react";
 
 import authAxios from "../api/authAxios";
 import { TOKEN_KEY } from "../constants";
@@ -52,13 +51,6 @@ const Navbar = () => {
   const location = useLocation();
   const isNotePage =
     location.pathname === "/" || location.pathname === "/notes";
-
-  useEffect(() => {
-    if (logoutMutation.isSuccess) {
-      localStorage.removeItem(TOKEN_KEY);
-      navigate("/signin", { replace: true });
-    }
-  }, [logoutMutation.isSuccess, navigate]);
 
   const items = [
     {
@@ -112,9 +104,8 @@ const Navbar = () => {
 
         <div className="block sm:hidden">
           <Header
-            className={`flex items-center px-8 ${
-              hasNotes ? "justify-end" : "justify-center"
-            } bg-background`}
+            className={`flex items-center px-8 ${hasNotes ? "justify-end" : "justify-center"
+              } bg-background`}
           >
             {hasNotes ? (
               <div className="w-[50vw] flex justify-between items-center">
