@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { Button, Form, Input, Modal, message, Flex } from "antd";
-import { LuFileEdit } from "react-icons/lu";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import authAxios from "../api/authAxios";
 import { API_URL } from "../config";
 import useNoteContext from "../hooks/useNoteContext";
 
-const EditNoteModal = ({ transcription }) => {
+const EditNoteModal = () => {
   const { setSelectedNote, selectedNote } = useNoteContext();
 
   const queryClient = useQueryClient();
@@ -17,17 +16,20 @@ const EditNoteModal = ({ transcription }) => {
 
   useEffect(() => {
     if (selectedNote) {
-      form.setFieldValue("transcription", transcription);
+      form.setFieldValue("transcription", selectedNote.transcription);
     }
-  }, [form, selectedNote, transcription]);
+  }, [form, selectedNote]);
+
 
   const mutation = useMutation({
     mutationFn: (payload) => {
+      console.info({ payload })
       if (!selectedNote._id) return;
       return authAxios.patch(`${API_URL}/notes/${selectedNote._id}`, payload);
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["notes"] });
+      setSelectedNote(data.data);
     },
   });
 
@@ -43,12 +45,6 @@ const EditNoteModal = ({ transcription }) => {
       setOpen(false);
     }
   };
-
-  useEffect(() => {
-    if (mutation.isSuccess && mutation.data) {
-      setSelectedNote(mutation.data.data);
-    }
-  }, [mutation.data, mutation.isSuccess, setSelectedNote]);
 
   const showModal = () => setOpen(true);
   const handleCancel = () => setOpen(false);
