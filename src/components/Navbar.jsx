@@ -1,5 +1,5 @@
 import { Avatar, Drawer, Dropdown, Layout, Menu, Space } from "antd";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, Navigate } from "react-router-dom";
 import { useNavigate } from "react-router";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
@@ -27,17 +27,21 @@ const Navbar = () => {
 
   const navigate = useNavigate();
   const tokensString = localStorage.getItem(TOKEN_KEY);
-  const tokens = JSON.parse(tokensString);
-  const refreshToken = tokens.refresh.token;
+
 
   const logoutMutation = useMutation({
     mutationFn: () => {
-      localStorage.removeItem(TOKEN_KEY);
-      return authAxios.post(`${API_URL}/auth/logout`, { refreshToken });
+      if (tokensString) {
+        const tokens = JSON.parse(tokensString);
+        const refreshToken = tokens.refresh.token;
+
+        localStorage.removeItem(TOKEN_KEY);
+        return authAxios.post(`${API_URL}/auth/logout`, { refreshToken });
+      }
+
     },
     onSuccess: () => {
       localStorage.removeItem(TOKEN_KEY);
-      window.location.href = "/signin";
     },
   });
 
@@ -52,6 +56,7 @@ const Navbar = () => {
   const isNotePage =
     location.pathname === "/" || location.pathname === "/notes";
 
+
   const items = [
     {
       key: "1",
@@ -62,6 +67,10 @@ const Navbar = () => {
       label: <span onClick={handleLogout}>Logout</span>,
     },
   ];
+
+  if (!tokensString) {
+    return <Navigate to="/signin" state={{ from: location }} replace />;
+  }
 
   if (isNotePage) {
     return (
