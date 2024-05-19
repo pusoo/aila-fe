@@ -231,15 +231,16 @@ function ChatBox({ note }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}></Input>
           <Button
-            type="submit"
+            htmlType="submit"
             icon={
-              <SendOutlined className="text-primary !text-xl sm:!text-base" />
+              <SendOutlined className="text-primary !text-xl sm:!text-base !bg-transparent" />
             }
             disabled={
               (mutation && mutation.isPending) ||
               (dataMessages && dataMessages.isPending)
             }
-            className="absolute bottom-[0.375rem] sm:bottom-[1.0625rem] right-1 sm:right-4 rounded-lg border p-0.5 text-white transition-colors"
+            className="absolute bottom-[0.375rem] sm:bottom-[1.0625rem] right-1 sm:right-4 rounded-lg border p-0.5 text-white transition-colors bg-transparent hover:!bg-transparent border-none"
+            // style={{ background: 'transparent', border: 'none', padding: 0 }}
           />
         </Flex>
       </form>

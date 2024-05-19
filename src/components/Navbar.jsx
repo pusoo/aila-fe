@@ -12,6 +12,7 @@ import {
   UserOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
+import { SlDiamond } from "react-icons/sl";
 import aila from "../assets/aila.svg";
 import { useState } from "react";
 
@@ -89,7 +90,7 @@ const Navbar = () => {
                 </Link>
               </Menu.Item> */}
               <Menu.Item key="1">
-                <Link to="/projects">
+                <Link to="/projects" className="flex items-center">
                   <FolderOutlined
                     className="text-primary mr-2"
                     style={{ fontSize: "16px" }}
@@ -98,6 +99,15 @@ const Navbar = () => {
                 </Link>
               </Menu.Item>
               <Menu.Item key="2">
+                <Link to="/pricing" className="flex items-center">
+                  <SlDiamond
+                    className="text-primary mr-2"
+                    style={{ fontSize: "12px" }}
+                  />
+                  Pricing
+                </Link>
+              </Menu.Item>
+              <Menu.Item key="3">
                 <Dropdown menu={{ items }}>
                   <Space>
                     <a>
@@ -169,17 +179,18 @@ const Navbar = () => {
             </Menu.Item>
             <Menu.Item
               key="2"
-              onClick={() => navigate("/profile")}
               style={{
                 display: "flex",
                 padding: "0px",
               }}
             >
-              <UserOutlined
-                className="text-primary mr-2"
-                style={{ fontSize: "24px" }}
-              />
-              Profile
+              <Link to="/pricing">
+                <SlDiamond
+                  className="text-primary mr-2"
+                  style={{ fontSize: "20px" }}
+                />
+              </Link>
+              Pricing
             </Menu.Item>
             <Menu.Item
               key="3"
