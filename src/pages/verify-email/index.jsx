@@ -2,14 +2,14 @@ import { useMutation } from "@tanstack/react-query";
 import { Flex, message } from "antd";
 import axios from "axios";
 import { useEffect, } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import { API_URL } from "../../config";
 import Robot from "../../assets/aila-icon.png";
 
 const VerifyEmailPage = () => {
-  const [searchParams] = useSearchParams();
-
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
   const token = searchParams.get('token');
 
   const mutation = useMutation({
