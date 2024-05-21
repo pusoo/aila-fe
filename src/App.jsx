@@ -72,9 +72,7 @@ export default function App() {
         path="/verify-email"
         exact
         element={
-          <CheckAuth>
-            <VerifyEmailPage />
-          </CheckAuth>
+          <VerifyEmailPage />
         }
       />
 
