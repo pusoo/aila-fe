@@ -159,15 +159,6 @@ const Navbar = () => {
           className="rounded-t-2xl"
         >
           <Menu mode="vertical" className="flex flex-col gap-2 text-lg">
-            {/* <Menu.Item key="1" style={{ padding: "0px" }}>
-              <Link to="/notes">
-                <FileOutlined
-                  className="text-primary mr-2"
-                  style={{ fontSize: "24px" }}
-                />
-                Notes
-              </Link>
-            </Menu.Item> */}
             <Menu.Item key="1" style={{ padding: "0px" }}>
               <Link to="/projects">
                 <FolderOutlined
@@ -194,6 +185,20 @@ const Navbar = () => {
             </Menu.Item>
             <Menu.Item
               key="3"
+              onClick={() => navigate("/profile")}
+              style={{
+                display: "flex",
+                padding: "0px",
+              }}
+            >
+              <UserOutlined
+                className="text-primary mr-2"
+                style={{ fontSize: "24px" }}
+              />
+              Profile
+            </Menu.Item>
+            <Menu.Item
+              key="4"
               style={{ padding: "0px" }}
               onClick={handleLogout}
             >
