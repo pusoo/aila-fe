@@ -8,24 +8,24 @@ import { API_URL } from "../../config";
 import Robot from "../../assets/aila-icon.png";
 
 const VerifyEmailPage = () => {
-  const searchParams = new URLSearchParams(window.location.search);
-  const token = searchParams.get('token');
+  // const searchParams = new URLSearchParams(window.location.search);
+  // const token = searchParams.get('token');
 
-  const mutation = useMutation({
-    mutationFn: () => {
-      if (token) {
-        return axios.post(`${API_URL}/auth/verify-email?token=${token}`);
-      } else {
-        return Promise.resolve();
-      }
-    },
-  });
+  // const mutation = useMutation({
+  //   mutationFn: () => {
+  //     if (token) {
+  //       return axios.post(`${API_URL}/auth/verify-email?token=${token}`);
+  //     } else {
+  //       return Promise.resolve();
+  //     }
+  //   },
+  // });
 
-  useEffect(() => {
-    if (token) {
-      mutation.mutateAsync()
-    }
-  }, [token])
+  // useEffect(() => {
+  //   if (token) {
+  //     mutation.mutateAsync()
+  //   }
+  // }, [token])
 
   useEffect(() => {
     if (mutation.isSuccess && mutation.data) {
@@ -47,7 +47,7 @@ const VerifyEmailPage = () => {
         <Flex className="block sm:hidden bg-gradient-to-r from-sky-700 to-sky-900 rounded-bl-[70px] rounded-br-[70px] h-60 text-center shadow-lg">
           <img src={Robot} alt="robot" width={200} />
         </Flex>
-        {
+        {/* {
           mutation.isSuccess ? <Flex vertical className="items-center gap-3">
             <p className="text-sm text-center">
               Your email has been verified. You can now log in!
@@ -56,7 +56,7 @@ const VerifyEmailPage = () => {
               Sign In
             </Link>
           </Flex> : <p className="text-sm text-center">Verifying your email</p>
-        }
+        } */}
       </div>
     </Flex>
   );
