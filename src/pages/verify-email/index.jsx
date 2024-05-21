@@ -2,14 +2,13 @@ import { useMutation } from "@tanstack/react-query";
 import { Flex, message } from "antd";
 import axios from "axios";
 import { useEffect, } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, } from "react-router-dom";
 
 import { API_URL } from "../../config";
 import Robot from "../../assets/aila-icon.png";
 
 const VerifyEmailPage = () => {
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
+  const searchParams = new URLSearchParams(window.location.search);
   const token = searchParams.get('token');
 
   const mutation = useMutation({
@@ -64,4 +63,6 @@ const VerifyEmailPage = () => {
 };
 
 export default VerifyEmailPage;
+
+
 
