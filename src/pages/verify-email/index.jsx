@@ -14,9 +14,12 @@ const VerifyEmailPage = () => {
 
   const mutation = useMutation({
     mutationFn: () => {
-      return axios.post(`${API_URL}/auth/verify-email?token=${token}`);
+      if (token) {
+        return axios.post(`${API_URL}/auth/verify-email?token=${token}`);
+      } else {
+        return Promise.resolve();
+      }
     },
-
   });
 
   useEffect(() => {
@@ -30,7 +33,6 @@ const VerifyEmailPage = () => {
       message.success("Your email is verified!");
     }
   }, [mutation.isSuccess, mutation.data]);
-
 
   return (
     <Flex
@@ -57,9 +59,9 @@ const VerifyEmailPage = () => {
           </Flex> : <p className="text-sm text-center">Verifying your email</p>
         }
       </div>
-
     </Flex>
   );
 };
 
 export default VerifyEmailPage;
+
