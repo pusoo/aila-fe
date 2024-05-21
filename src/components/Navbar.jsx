@@ -1,11 +1,11 @@
 import { Avatar, Drawer, Dropdown, Layout, Menu, Space } from "antd";
-import { Link, useLocation } from "react-router-dom";
-import logo from "../assets/aila-logo.svg";
-import useNoteContext from "../hooks/useNoteContext";
+import { Link, useLocation, Navigate } from "react-router-dom";
 import { useNavigate } from "react-router";
 import { useMutation } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useState } from "react";
 
+import logo from "../assets/aila-logo.svg";
+import useNoteContext from "../hooks/useNoteContext";
 import {
   FolderOutlined,
   UnorderedListOutlined,
@@ -14,7 +14,6 @@ import {
 } from "@ant-design/icons";
 import { SlDiamond } from "react-icons/sl";
 import aila from "../assets/aila.svg";
-import { useState } from "react";
 
 import authAxios from "../api/authAxios";
 import { TOKEN_KEY } from "../constants";
@@ -29,17 +28,21 @@ const Navbar = () => {
 
   const navigate = useNavigate();
   const tokensString = localStorage.getItem(TOKEN_KEY);
-  const tokens = JSON.parse(tokensString);
-  const refreshToken = tokens.refresh.token;
+
 
   const logoutMutation = useMutation({
     mutationFn: () => {
-      localStorage.removeItem(TOKEN_KEY);
-      return authAxios.post(`${API_URL}/auth/logout`, { refreshToken });
+      if (tokensString) {
+        const tokens = JSON.parse(tokensString);
+        const refreshToken = tokens.refresh.token;
+
+        localStorage.removeItem(TOKEN_KEY);
+        return authAxios.post(`${API_URL}/auth/logout`, { refreshToken });
+      }
+
     },
     onSuccess: () => {
       localStorage.removeItem(TOKEN_KEY);
-      window.location.href = "/signin";
     },
   });
 
@@ -54,12 +57,6 @@ const Navbar = () => {
   const isNotePage =
     location.pathname === "/" || location.pathname === "/notes";
 
-  useEffect(() => {
-    if (logoutMutation.isSuccess) {
-      localStorage.removeItem(TOKEN_KEY);
-      navigate("/signin", { replace: true });
-    }
-  }, [logoutMutation.isSuccess, navigate]);
 
   const items = [
     {
@@ -71,6 +68,10 @@ const Navbar = () => {
       label: <span onClick={handleLogout}>Logout</span>,
     },
   ];
+
+  if (!tokensString) {
+    return <Navigate to="/signin" state={{ from: location }} replace />;
+  }
 
   if (isNotePage) {
     return (
@@ -122,9 +123,8 @@ const Navbar = () => {
 
         <div className="block sm:hidden">
           <Header
-            className={`flex items-center px-8 ${
-              hasNotes ? "justify-end" : "justify-center"
-            } bg-background`}
+            className={`flex items-center px-8 ${hasNotes ? "justify-end" : "justify-center"
+              } bg-background`}
           >
             {hasNotes ? (
               <div className="w-[50vw] flex justify-between items-center">

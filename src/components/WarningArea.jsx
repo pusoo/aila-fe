@@ -2,11 +2,11 @@ import { Button, Menu, Dropdown } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import EditNoteModal from "./EditNoteModal";
 
-const WarningArea = ({ transcription, onDelete }) => {
+const WarningArea = ({ onDelete }) => {
   const menu = (
     <Menu>
       <Menu.Item key="1">
-        <EditNoteModal transcription={transcription} />
+        <EditNoteModal />
       </Menu.Item>
       <Menu.Item key="2" onClick={onDelete}>
         Archive

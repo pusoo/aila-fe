@@ -258,7 +258,6 @@ const Note = () => {
           </div>
         </Flex>
         <WarningArea
-          transcription={(response && response.transcription) || ""}
           onDelete={handleDeleteNote}
         />
       </Flex>

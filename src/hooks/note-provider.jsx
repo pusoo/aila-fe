@@ -18,10 +18,10 @@ export function NoteProvider({ children }) {
   });
 
   useEffect(() => {
-    if (Array.isArray(notes) && notes.length > 0) {
+    if (Array.isArray(notes) && notes.length > 0 && !selectedNote) {
       setSelectedNote(notes[0])
     }
-  }, [notes])
+  }, [notes, selectedNote])
 
 
   const value = {
