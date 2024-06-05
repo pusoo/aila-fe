@@ -1,8 +1,4 @@
-import {
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Button, Layout, Typography } from "antd";
 import { LeftOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
@@ -93,12 +89,19 @@ const Generate = () => {
   });
 
   useEffect(() => {
-    if (genType === "video" && videoStatus && videoStatus.status === "completed") {
+    if (
+      genType === "video" &&
+      videoStatus &&
+      videoStatus.status === "completed"
+    ) {
       setIsComplete(true);
-    } else if (genType === "audio" && audioStatus && audioStatus.status === "completed") {
+    } else if (
+      genType === "audio" &&
+      audioStatus &&
+      audioStatus.status === "completed"
+    ) {
       setIsComplete(true);
-    }
-    else {
+    } else {
       setIsComplete(false);
     }
   }, [audioStatus, genType, videoStatus]);
@@ -131,9 +134,16 @@ const Generate = () => {
       </Header>
 
       <div className="flex flex-1 w-full bg-generateBackground">
-        {videoStatus && videoStatus.status === "processing" || audioStatus && audioStatus.status === "processing" ? <div className="flex items-center justify-center flex-1">
-          <Typography.Title>{genType === "audio" ? "Generating Audio.." : "Generating Video.."}</Typography.Title>
-        </div> :
+        {(videoStatus && videoStatus.status === "processing") ||
+        (audioStatus && audioStatus.status === "processing") ? (
+          <div className="flex items-center justify-center flex-1">
+            <Typography.Title>
+              {genType === "audio"
+                ? "Generating Audio..."
+                : "Generating Video..."}
+            </Typography.Title>
+          </div>
+        ) : (
           <>
             <Sidebar showTab={showTab} width={"320px"} toggleTab={toggleTab}>
               <div className="flex h-full">
@@ -150,7 +160,6 @@ const Generate = () => {
                   note={currentNote}
                   setNote={setCurrentNote}
                   audio={audio}
-
                 />
               ) : (
                 <GenerateVideoContent
@@ -183,7 +192,8 @@ const Generate = () => {
                 )}
               </div>
             </div>
-          </>}
+          </>
+        )}
       </div>
     </div>
   );

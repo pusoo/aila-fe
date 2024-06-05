@@ -1,11 +1,4 @@
-import {
-  Flex,
-  Avatar,
-  Button,
-  Input,
-  Typography,
-  message,
-} from "antd";
+import { Flex, Avatar, Button, Input, Typography, message, Spin } from "antd";
 import { CloseCircleOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -19,6 +12,7 @@ import VoiceModal from "./VoicesModal";
 function VideoDrawer({ note, setNote }) {
   const [selectedVoice, setSelectedVoice] = useState(null);
   const [selectedAvatar, setSelectedAvatar] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const { data: avatars } = useQuery({
     queryKey: ["avatars"],
     queryFn: async () => {
@@ -62,7 +56,7 @@ function VideoDrawer({ note, setNote }) {
       return authAxios.delete(`${API_URL}/talkingPhotos/${id}`);
     },
     onSuccess: () => {
-      message.success("Successfully deleted!")
+      message.success("Successfully deleted!");
       queryClient.invalidateQueries({ queryKey: ["avatars"] });
     },
   });
@@ -75,9 +69,10 @@ function VideoDrawer({ note, setNote }) {
         !selectedVoice.voice_id &&
         !note._id
       ) {
-        message.error("Please select a photo and voice")
+        message.error("Please select a photo and voice");
         return;
       }
+      setIsLoading(true);
       // TODO add message when incomplete data
       const payload = {
         photoId: selectedAvatar.photoId,
@@ -168,23 +163,32 @@ function VideoDrawer({ note, setNote }) {
           <Typography.Paragraph className="!mb-2 !text-base sm:!text-sm">
             Avatar
           </Typography.Paragraph>
-          <div className="h-14 opacity-90 flex items-center gap-2 rounded-lg px-2" style={{ border: "1px solid #40A9E8" }}>
+          <div
+            className="h-14 opacity-90 flex items-center gap-2 rounded-lg px-2"
+            style={{ border: "1px solid #40A9E8" }}
+          >
             <div className="flex gap-3">
               {avatars && Array.isArray(avatars.results)
                 ? avatars.results.map((avatar) => (
-                  <div key={avatar._id} className="relative">
-                    <Avatar
-                      size={40}
-                      src={avatar.url}
-                      onClick={() => setSelectedAvatar(avatar)}
-                      className={`${selectedAvatar && selectedAvatar._id === avatar._id
-                        ? "border-primary border-6"
-                        : ""
+                    <div key={avatar._id} className="relative">
+                      <Avatar
+                        size={40}
+                        src={avatar.url}
+                        onClick={() => setSelectedAvatar(avatar)}
+                        className={`${
+                          selectedAvatar && selectedAvatar._id === avatar._id
+                            ? "border-primary border-6"
+                            : ""
                         }`}
-                    ></Avatar>
-                    <CloseCircleOutlined className="text-md text-red-500 hover:text-red-700 bg-white rounded-full top-0 right-0 absolute cursor-pointer" onClick={() => deleteVideoMutation.mutateAsync(avatar._id)} />
-                  </div>
-                ))
+                      ></Avatar>
+                      <CloseCircleOutlined
+                        className="text-md text-red-500 hover:text-red-700 bg-white rounded-full top-0 right-0 absolute cursor-pointer"
+                        onClick={() =>
+                          deleteVideoMutation.mutateAsync(avatar._id)
+                        }
+                      />
+                    </div>
+                  ))
                 : null}
             </div>
             <UploadModal />
@@ -211,14 +215,19 @@ function VideoDrawer({ note, setNote }) {
         type="primary"
         size="large"
         className="bg-primary hover:!bg-[#359EDD] h-12 sm:h-11"
+        disabled={isLoading}
         onClick={handleGenerateVideo}
       >
-        <div className="flex items-center justify-center gap-2">
-          <img className="h-5 aspect-square" src={sparkleIcon} />
-          <Typography.Text className="text-white text-base sm:!text-base">
-            Generate Video
-          </Typography.Text>
-        </div>
+        {isLoading ? (
+          <Spin />
+        ) : (
+          <div className="flex items-center justify-center gap-2">
+            <img className="h-5 aspect-square" src={sparkleIcon} />
+            <Typography.Text className="text-white text-base sm:!text-base">
+              Generate Video
+            </Typography.Text>
+          </div>
+        )}
       </Button>
     </div>
   );

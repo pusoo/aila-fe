@@ -1,10 +1,4 @@
-import {
-  Flex,
-  Button,
-  Input,
-  Typography,
-  message,
-} from "antd";
+import { Flex, Button, Input, Typography, message, Spin } from "antd";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import authAxios from "../api/authAxios";
@@ -15,6 +9,7 @@ import VoiceModal from "./VoicesModal";
 
 function AudioDrawer({ note, setNote }) {
   const [selectedVoice, setSelectedVoice] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const { data: avatars } = useQuery({
     queryKey: ["avatars"],
     queryFn: async () => {
@@ -55,14 +50,13 @@ function AudioDrawer({ note, setNote }) {
 
   const handleGenerateVideo = async () => {
     try {
-      if (
-        !note.summary &&
-        !selectedVoice.voice_id &&
-        !note._id
-      ) {
-        message.error("Please select a voice")
+      if (!note.summary && !selectedVoice.voice_id && !note._id) {
+        message.error("Please select a voice");
         return;
       }
+
+      setIsLoading(true);
+
       const payload = {
         photoId: avatars.results[0].photoId,
         summary: note.summary,
@@ -129,14 +123,19 @@ function AudioDrawer({ note, setNote }) {
         type="primary"
         size="large"
         className="bg-primary hover:!bg-[#359EDD] h-12 sm:h-11"
+        disabled={isLoading}
         onClick={handleGenerateVideo}
       >
-        <div className="flex items-center justify-center gap-2">
-          <img className="h-5 aspect-square" src={sparkleIcon} />
-          <Typography.Text className="text-white text-base sm:!text-base">
-            Generate Audio
-          </Typography.Text>
-        </div>
+        {isLoading ? (
+          <Spin />
+        ) : (
+          <div className="flex items-center justify-center gap-2">
+            <img className="h-5 aspect-square" src={sparkleIcon} />
+            <Typography.Text className="text-white text-base sm:!text-base">
+              Generate Audio
+            </Typography.Text>
+          </div>
+        )}
       </Button>
     </div>
   );

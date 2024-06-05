@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Flex, message, Button, Empty, Input } from "antd";
+import { Flex, message, Button, Empty, Input, Modal } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { SendOutlined } from "@ant-design/icons";
 
@@ -7,11 +7,14 @@ import authAxios from "../api/authAxios";
 import { API_URL } from "../config";
 import aila from "../assets/aila-icon.png";
 import bubbles from "../assets/bubbles.svg";
+import { useSubscription } from "../hooks/SubscriptionContext";
 
 function ChatBox({ note }) {
   const [query, setQuery] = useState("");
   const [messages, setMessages] = useState([]);
   const [isMessageLoading, setIsMessageLoading] = useState(false);
+  const [subscription, setSubscription] = useState(false);
+  const { subscribedPlan } = useSubscription();
 
   const messagesContainerRef = useRef(null);
 
@@ -94,6 +97,19 @@ function ChatBox({ note }) {
   if (!note) {
     return null;
   }
+  // Subscription
+  const isAllowed =
+    subscribedPlan === "free" ||
+    subscribedPlan === "basic" ||
+    subscribedPlan === "premium" ||
+    subscribedPlan === "weekly" ||
+    subscribedPlan === "daily pass";
+
+  const handleSubscriptionModal = () => {
+    if (!isAllowed) {
+      setSubscription(true);
+    }
+  };
 
   return (
     <Flex vertical className="flex-1 justify-between">
@@ -107,7 +123,8 @@ function ChatBox({ note }) {
             right: 0,
             bottom: 0,
             justifyContent: "end",
-          }}>
+          }}
+        >
           <Flex gap={16} className="flex-col overflow-y-scroll pb-5">
             {messages.length === 0 ? (
               <Flex align="center" className="h-lvh justify-center opacity-30">
@@ -168,7 +185,8 @@ function ChatBox({ note }) {
                       strokeWidth="15"
                       r="15"
                       cx="40"
-                      cy="100">
+                      cy="100"
+                    >
                       <animate
                         attributeName="opacity"
                         calcMode="spline"
@@ -176,7 +194,8 @@ function ChatBox({ note }) {
                         values="1;0;1;"
                         keySplines=".5 0 .5 1;.5 0 .5 1"
                         repeatCount="indefinite"
-                        begin="-.4"></animate>
+                        begin="-.4"
+                      ></animate>
                     </circle>
                     <circle
                       fill="#D3D3D3"
@@ -184,7 +203,8 @@ function ChatBox({ note }) {
                       strokeWidth="15"
                       r="15"
                       cx="100"
-                      cy="100">
+                      cy="100"
+                    >
                       <animate
                         attributeName="opacity"
                         calcMode="spline"
@@ -192,7 +212,8 @@ function ChatBox({ note }) {
                         values="1;0;1;"
                         keySplines=".5 0 .5 1;.5 0 .5 1"
                         repeatCount="indefinite"
-                        begin="-.2"></animate>
+                        begin="-.2"
+                      ></animate>
                     </circle>
                     <circle
                       fill="#D3D3D3"
@@ -200,7 +221,8 @@ function ChatBox({ note }) {
                       strokeWidth="15"
                       r="15"
                       cx="160"
-                      cy="100">
+                      cy="100"
+                    >
                       <animate
                         attributeName="opacity"
                         calcMode="spline"
@@ -208,7 +230,8 @@ function ChatBox({ note }) {
                         values="1;0;1;"
                         keySplines=".5 0 .5 1;.5 0 .5 1"
                         repeatCount="indefinite"
-                        begin="0"></animate>
+                        begin="0"
+                      ></animate>
                     </circle>
                   </svg>
                 </div>
@@ -221,15 +244,21 @@ function ChatBox({ note }) {
       <form
         onSubmit={(e) => {
           e.preventDefault();
+          if (!isAllowed) {
+            handleSubscriptionModal();
+            return;
+          }
           console.log({ query });
           handleSendQuery(query);
-        }}>
+        }}
+      >
         <Flex>
           <Input
             className="m-0 w-full resize-none border-2 border-tertiary text-xl sm:text-xs bg-transparent py-2 pl-3 pr-8 rounded-lg hover:border-primary hover:bg-transparent focus:border-primary focus:outline-none"
             placeholder="Ask any question..."
             value={query}
-            onChange={(e) => setQuery(e.target.value)}></Input>
+            onChange={(e) => setQuery(e.target.value)}
+          ></Input>
           <Button
             htmlType="submit"
             icon={
@@ -244,6 +273,17 @@ function ChatBox({ note }) {
           />
         </Flex>
       </form>
+      <Modal
+        title="Subscription Required"
+        centered
+        open={subscription}
+        onOk={() => setSubscription(false)}
+        cancelButtonProps={{ style: { display: "none" } }}
+        maskClosable={false}
+        closable={false}
+      >
+        <p>You need to subscribe to access this feature.</p>
+      </Modal>
     </Flex>
   );
 }

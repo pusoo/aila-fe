@@ -1,9 +1,22 @@
-import { Button, Card, Col, Modal, Row, Segmented, Space, Table, Typography, message } from "antd";
+import {
+  Button,
+  Card,
+  Col,
+  Dropdown,
+  Row,
+  Segmented,
+  Typography,
+  Menu,
+} from "antd";
 import { useState } from "react";
 import { Header } from "antd/es/layout/layout";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeftOutlined } from "@ant-design/icons";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  ArrowLeftOutlined,
+  DeleteOutlined,
+  EllipsisOutlined,
+} from "@ant-design/icons";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import authAxios from "../../api/authAxios";
 import { API_URL } from "../../config";
 const { Title } = Typography;
@@ -13,95 +26,40 @@ const Media = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { data: notes } = useQuery({
-    queryKey: ["archived-notes"],
-    queryFn: async () => {
-      const filter = JSON.stringify({ isArchived: true })
-      const { data } = await authAxios.get(`${API_URL}/notes?limit=1000&filter=${filter}`)
-      return data.results;
-    },
-  });
-
   const { data: medias } = useQuery({
     queryKey: ["medias"],
     queryFn: async () => {
-      const { data } = await authAxios.get(`${API_URL}/medias?limit=1000&populate=note`)
+      const { data } = await authAxios.get(
+        `${API_URL}/medias?limit=1000&populate=note`
+      );
       return data.results;
     },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => {
-      if (!id) return;
-      return authAxios.delete(`${API_URL}/notes/${id}`);
+    mutationFn: async (id) => {
+      await authAxios.delete(`${API_URL}/medias/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notes"] });
-      queryClient.invalidateQueries({ queryKey: ["archived-notes"] });
-
+      queryClient.invalidateQueries(["medias"]);
     },
   });
-
-  const retrivedMutation = useMutation({
-    mutationFn: (id) => {
-      if (!id) return;
-      return authAxios.post(`${API_URL}/notes/${id}/retrieve`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notes"] });
-      queryClient.invalidateQueries({ queryKey: ["archived-notes"] });
-
-    },
-  });
-
-  const handleDeleteNote = async (id) => {
-    try {
-      await deleteMutation.mutateAsync(id);
-      message.success("Note archived successfully!");
-    } catch (err) {
-      message.error("Failed to archive the note!");
-    }
-  };
 
   const handleDelete = (id) => {
-    Modal.confirm({
-      title: "Delete note",
-      content: "Once deleted, notes cannot be recovered. Be careful.",
-      onOk: () => handleDeleteNote(id),
-      okButtonProps: {
-        isLoading: deleteMutation.isLoading,
-        disabled: deleteMutation.isLoading,
-      },
-      cancelButtonProps: {
-        disabled: deleteMutation.isLoading,
-      },
-      footer: (_, { OkBtn, CancelBtn }) => (
-        <>
-          <CancelBtn />
-          <OkBtn />
-        </>
-      ),
-    });
+    deleteMutation.mutate(id);
   };
 
-  const columns = [
-    {
-      title: 'Title',
-      dataIndex: 'title',
-      key: 'title',
-    },
-    {
-      title: 'Action',
-      dataIndex: 'action',
-      key: 'action',
-      render: (_, record) => (
-        <Space size="middle">
-          <Button onClick={() => retrivedMutation.mutateAsync(record._id)}>Retrieve</Button>
-          <Button danger onClick={() => handleDelete(record._id)}>Delete</Button>
-        </Space>
-      ),
-    },
-  ];
+  const menu = (id) => (
+    <Menu>
+      <Menu.Item
+        key="1"
+        icon={<DeleteOutlined />}
+        onClick={() => handleDelete(id)}
+      >
+        Delete
+      </Menu.Item>
+    </Menu>
+  );
 
   return (
     <>
@@ -129,54 +87,90 @@ const Media = () => {
               label: <span className="px-2 py-1 rounded-xl">Videos</span>,
               value: "Videos",
             },
-            {
-              label: <span className="px-2 py-1 rounded-xl">Archived</span>,
-              value: "Archived",
-            },
           ]}
           value={value}
           onChange={(value) => {
             setValue(value);
           }}
         />
-        {value === "Archived" && <Table dataSource={notes} columns={columns} className="py-5" />}
-        {value === "Videos" && <Row className="gap-5 py-5">
-          {Array.isArray(medias) && medias.filter(media => media.url && media.type === "video").map(media => {
-            return (
-              <Col xs={24} sm={6} key={media._id}>
-                <video
-                  autoPlay={false}
-                  controls={true}
-                  className="w-full rounded shadow-md border-1 border-slate-300"
-                >
-                  <source src={media.url} type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-              </Col>
-            )
-          })}
-        </Row>}
-        {value === "Audios" && <Row className="gap-5 py-5">
-          {Array.isArray(medias) && medias.filter(media => media.url && media.type === "audio").map(media => {
-            return (
-              <Col xs={24} sm={6} key={media._id}>
-                <Card>
-                  <Typography.Title level={5}>Note: {media.note && media.note.title}</Typography.Title>
-                  <audio
-                    autoPlay={false}
-                    controls={true}
-                    className="w-full border-1 border-slate-300"
-                  >
-                    <source src={media.url} type="audio/ogg" />
-                    <source src={media.url} type="audio/mpeg" />
-                    Your browser does not support the video tag.
-                  </audio>
-                </Card>
-              </Col>
-            )
-          })}
-        </Row>}
 
+        {value === "Videos" && (
+          <Row className="gap-5 py-5">
+            {Array.isArray(medias) &&
+              medias
+                .filter((media) => media.url && media.type === "video")
+                .map((media) => {
+                  return (
+                    <Col xs={24} sm={6} key={media._id}>
+                      <Card>
+                        <Dropdown
+                          overlay={menu(media._id)}
+                          placement="bottomRight"
+                          trigger={["click"]}
+                          className="absolute top-2 right-2"
+                        >
+                          <Button
+                            shape="circle"
+                            size="small"
+                            icon={<EllipsisOutlined />}
+                          />
+                        </Dropdown>
+                        <video
+                          autoPlay={false}
+                          controls={true}
+                          className="w-full rounded "
+                        >
+                          <source src={media.url} type="video/mp4" />
+                          Your browser does not support the video tag.
+                        </video>
+                      </Card>
+                      <p className="mt-2 font-semibold">
+                        {media.note && media.note.title}
+                      </p>
+                    </Col>
+                  );
+                })}
+          </Row>
+        )}
+        {value === "Audios" && (
+          <Row className="gap-5 py-5">
+            {Array.isArray(medias) &&
+              medias
+                .filter((media) => media.url && media.type === "audio")
+                .map((media) => {
+                  return (
+                    <Col xs={24} sm={6} key={media._id}>
+                      <Card className="relative">
+                        <Dropdown
+                          overlay={menu(media._id)}
+                          placement="bottomRight"
+                          trigger={["click"]}
+                          className="absolute top-2 right-2"
+                        >
+                          <Button
+                            shape="circle"
+                            size="small"
+                            icon={<EllipsisOutlined />}
+                          />
+                        </Dropdown>
+                        <audio
+                          autoPlay={false}
+                          controls={true}
+                          className="w-full border-1 border-slate-300"
+                        >
+                          <source src={media.url} type="audio/ogg" />
+                          <source src={media.url} type="audio/mpeg" />
+                          Your browser does not support the audio tag.
+                        </audio>
+                      </Card>
+                      <p className="mt-2 font-semibold">
+                        {media.note && media.note.title}
+                      </p>
+                    </Col>
+                  );
+                })}
+          </Row>
+        )}
       </div>
     </>
   );
