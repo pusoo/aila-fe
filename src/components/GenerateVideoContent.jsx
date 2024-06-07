@@ -5,11 +5,11 @@ function GenerateVideoContent({ note, setNote, video }) {
   if (!note) return null;
   return (
     <>
-      <div className="basis-5/12 bg-generateBackground flex justify-center items-center">
+      <div className="basis-3/5 bg-generateBackground flex justify-center items-center">
         {video && (
           <>
             <video
-              className="w-full max-w-[820px] h-full max-h-[15em]"
+              className="w-full max-w-[820px] h-full max-h-[20em]"
               autoPlay={false}
               controls={true}
             >
@@ -18,16 +18,14 @@ function GenerateVideoContent({ note, setNote, video }) {
             </video>
           </>
         )}
-
-
       </div>
-      <div className="basis-8/12 flex justify-center items-end bg-generateBackground">
-        <div className="w-full h-full bg-white xl:w-[53.125rem] 2xl:w-[65rem] p-5 mb-5 mx-5 sm:mx-0 rounded-lg">
+      <div className="basis-2/5 flex justify-center items-end bg-generateBackground">
+        <div className="w-full bg-white xl:w-[53.125rem] 2xl:w-[65rem] p-5 mb-5 mx-5 sm:mx-0 rounded-lg">
           <Typography.Title level={5} type="secondary">
             Summary
           </Typography.Title>
           <TextArea
-            autoSize={{ minRows: 12, maxRows: 12 }}
+            autoSize={{ minRows: 5, maxRows: 10 }}
             bordered={false}
             className="w-full flex-1 border-0 p-0 mt-2"
             value={note.summary}

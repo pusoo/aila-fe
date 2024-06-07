@@ -10,7 +10,6 @@ import authAxios from "../api/authAxios";
 import { API_URL } from "../config";
 import useNoteContext from "../hooks/useNoteContext";
 import NotesCategory from "./NotesCategory";
-import Files from "./Files";
 import WarningArea from "./WarningArea";
 import CreateNoteModal from "./CreateNoteModal";
 
@@ -38,7 +37,7 @@ const options = {
   },
 };
 
-const Note = () => {
+const Note = ({ subscribedPlan }) => {
   const queryClient = useQueryClient();
   const { setSelectedNote, selectedNote } = useNoteContext();
 
@@ -103,7 +102,7 @@ const Note = () => {
     }
   }, [response, setSelectedNote]);
 
-  const handleDeleteNote = async () => {
+  const handleArchiveNote = async () => {
     try {
       setIsLoading(true);
       await archivedMutation.mutateAsync();
@@ -229,7 +228,6 @@ const Note = () => {
         gap={15}
       >
         <CreateNoteModal />
-        {/* <CreateFolderMainContent /> */}
       </Flex>
 
       <Divider className="border-none m-3" />
@@ -257,9 +255,7 @@ const Note = () => {
             </Typography.Text>
           </div>
         </Flex>
-        <WarningArea
-          onDelete={handleDeleteNote}
-        />
+        <WarningArea id={selectedNote._id} onArchive={handleArchiveNote} />
       </Flex>
 
       <Divider className="border-none m-3" />
