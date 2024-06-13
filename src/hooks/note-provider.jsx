@@ -20,6 +20,18 @@ export function NoteProvider({ children }) {
     },
   });
 
+  const { data: me } = useQuery({
+    queryKey: ["getMe"],
+    queryFn: async () => {
+      const { data } = await authAxios.get(
+        `${API_URL}/auth/me`
+      );
+      return data
+    },
+  });
+
+
+  console.log({ me })
   useEffect(() => {
     if (Array.isArray(notes) && notes.length > 0 && !selectedNote) {
       setSelectedNote(notes[0]);
@@ -37,11 +49,12 @@ export function NoteProvider({ children }) {
 
   const value = {
     notes: notes || [],
-    selectedNote, 
+    selectedNote,
     setSelectedNote: (note) => {
       setSelectedNote(note);
     },
     accessHistory,
+    memorySize: me && me.memorySize || '0 KB'
   };
 
   return <NoteContext.Provider value={value}>{children}</NoteContext.Provider>;

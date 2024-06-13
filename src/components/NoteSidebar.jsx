@@ -2,9 +2,10 @@ import { Card, Typography, Flex, Progress } from "antd";
 import { CloudOutlined } from "@ant-design/icons";
 import CreateNoteFolder from "./CreateNoteFolder";
 import useNoteContext from "../hooks/useNoteContext";
+import { useMemo } from "react";
 
 const NoteSidebar = () => {
-  const { notes, setSelectedNote, selectedNote } = useNoteContext();
+  const { notes, setSelectedNote, selectedNote, memorySize } = useNoteContext();
 
   const conicColors = {
     "0%": "#4285F4",
@@ -12,6 +13,25 @@ const NoteSidebar = () => {
     "100%": "#EA4335",
   };
 
+  const convertSizeToPercentage = useMemo(() => {
+    if (!memorySize) return "0 KB"
+    const totalSizeGB = 10
+    const [value, unit] = memorySize.trim().split(' ');
+    let bytes = parseFloat(value);
+
+    if (unit === 'GB') {
+      bytes *= 1024 * 1024 * 1024;
+    } else if (unit === 'MB') {
+      bytes *= 1024 * 1024;
+    } else if (unit === 'KB') {
+      bytes *= 1024;
+    }
+
+    const totalBytes = totalSizeGB * 1024 * 1024 * 1024;
+    const percentage = (bytes / totalBytes) * 100;
+    return percentage.toFixed(5);
+  }, [memorySize])
+  console.info(convertSizeToPercentage)
   return (notes || []).length > 0 ? (
     <div className="relative sm:mt-5 sm:mx-5 p-0 h-full">
       <CreateNoteFolder />
@@ -29,11 +49,10 @@ const NoteSidebar = () => {
                 height: "40px",
                 border: 0,
               }}
-              className={`rounded-lg  ${
-                selectedNote && note._id === selectedNote._id
-                  ? "bg-gray-100 hover:bg-gray-200"
-                  : "bg-transparent hover:bg-gray-200"
-              }`}
+              className={`rounded-lg  ${selectedNote && note._id === selectedNote._id
+                ? "bg-gray-100 hover:bg-gray-200"
+                : "bg-transparent hover:bg-gray-200"
+                }`}
               onClick={() => {
                 setSelectedNote(note);
               }}
@@ -55,16 +74,13 @@ const NoteSidebar = () => {
           <p>Storage</p>
         </Flex>
         <Progress
-          percent={50}
-          // percentPosition={{
-          //   align: "center",
-          //   type: "outer",
-          // }}
+          percent={convertSizeToPercentage}
           size="small"
           strokeColor={conicColors}
           className="m-0"
+          showInfo={false}
         />
-        <p>5 of 10 GB used</p>
+        <p>{memorySize} of 10 GB used</p>
       </Flex>
     </div>
   ) : (
