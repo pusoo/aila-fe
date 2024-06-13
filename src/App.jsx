@@ -11,6 +11,7 @@ import Generate from "./pages/generate";
 import Error from "./pages/error";
 import VerifyEmailPage from "./pages/verify-email";
 import Pricing from "./pages/pricing";
+import Policies from "./pages/policies";
 
 const RequireAuth = ({ children }) => {
   const location = useLocation();
@@ -47,6 +48,7 @@ export default function App() {
         <Route path="/projects" element={<Media />} />
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/generate/:noteId" exact element={<Generate />} />
+        <Route path="/policies" element={<Policies/>}/>
       </Route>
 
       <Route

@@ -1,4 +1,13 @@
-import { Button, Divider, Flex, Modal, message, Typography } from "antd";
+import {
+  Button,
+  Divider,
+  Flex,
+  Modal,
+  message,
+  Typography,
+  Tooltip,
+  Tour,
+} from "antd";
 import moment from "moment";
 import YouTube from "react-youtube";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -37,7 +46,7 @@ const options = {
   },
 };
 
-const Note = ({ subscribedPlan }) => {
+const Note = () => {
   const queryClient = useQueryClient();
   const { setSelectedNote, selectedNote } = useNoteContext();
 
@@ -236,7 +245,7 @@ const Note = ({ subscribedPlan }) => {
         <Flex vertical>
           <Typography.Title
             editable={{
-              icon: <EditOutlined className="text-slate-400" />,
+              icon: <EditOutlined className="text-primary" />,
               onChange: (e) => editMutation.mutateAsync(e),
               text: selectedNote.title,
             }}
@@ -246,11 +255,11 @@ const Note = ({ subscribedPlan }) => {
           </Typography.Title>
           <div className="flex flex-col gap-1">
             <Typography.Text className="text-gray-400">
-              Date Created:
+              Date Created: &nbsp;
               {moment(selectedNote.createdAt).format("MMM DD, YYYY")}
             </Typography.Text>
             <Typography.Text className="text-gray-400">
-              Last Update:
+              Last Update: &nbsp;
               {moment(selectedNote.updatedAt).format("MMM DD, YYYY")}
             </Typography.Text>
           </div>
@@ -279,51 +288,57 @@ const Note = ({ subscribedPlan }) => {
       ) : (
         selectedNote.summary && (
           <>
-            <Flex className="bg-white rounded-lg p-5 border-solid border-2 border-tertiary">
+            <Flex className="bg-white rounded-lg p-5 shadow-md">
               <div className="flex-1" ref={targetRef}>
-                <Text strong style={{ marginBottom: "20px", color: "#8C8F92" }}>
+                <Text className="text-gray-300" strong>
                   Summary
                 </Text>
-                <p style={{ width: "100%" }}>{selectedNote.summary}</p>
+                <p className="w-full mt-2">{selectedNote.summary}</p>
               </div>
               <Flex vertical className="pl-2">
-                <Button type="text" className="p-0">
-                  <CopyOutlined
-                    onClick={copyTextToClipboard}
-                    className="text-gray-400 text-base"
-                  />
-                </Button>
-                <Button
-                  type="text"
-                  onClick={() => {
-                    if (selectedNote.summary) {
-                      Modal.confirm({
-                        title: "Summarize notes",
-                        content:
-                          "Are you certain of your intention to re-summarize your transcription? This action will result in the loss of the current summary.",
-                        onOk: handleSummarize,
-                        footer: (_, { OkBtn, CancelBtn }) => (
-                          <>
-                            <CancelBtn />
-                            <OkBtn />
-                          </>
-                        ),
-                      });
-                      return;
-                    }
-                    handleSummarize();
-                  }}
-                  className="p-0"
-                >
-                  <RedoOutlined className="text-gray-400 text-base" />
-                </Button>
+                <Tooltip title="Copy" color="#2db7f5">
+                  <Button type="text" className="p-0">
+                    <CopyOutlined
+                      onClick={copyTextToClipboard}
+                      className="text-gray-400 text-base"
+                    />
+                  </Button>
+                </Tooltip>
+                <Tooltip title="Regenerate" color="#2db7f5">
+                  <Button
+                    type="text"
+                    onClick={() => {
+                      if (selectedNote.summary) {
+                        Modal.confirm({
+                          title: "Summarize notes",
+                          content:
+                            "Are you certain of your intention to re-summarize your transcription? This action will result in the loss of the current summary.",
+                          onOk: handleSummarize,
+                          footer: (_, { OkBtn, CancelBtn }) => (
+                            <>
+                              <CancelBtn />
+                              <OkBtn />
+                            </>
+                          ),
+                        });
+                        return;
+                      }
+                      handleSummarize();
+                    }}
+                    className="p-0"
+                  >
+                    <RedoOutlined className="text-gray-400 text-base" />
+                  </Button>
+                </Tooltip>
               </Flex>
             </Flex>
             <Divider />
-            <NotesCategory
-              handleDownloadPdf={handleDownloadPdf}
-              isGeneratingPdf={isGeneratingPdf}
-            />
+            <Flex>
+              <NotesCategory
+                handleDownloadPdf={handleDownloadPdf}
+                isGeneratingPdf={isGeneratingPdf}
+              />
+            </Flex>
           </>
         )
       )}

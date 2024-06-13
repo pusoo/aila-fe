@@ -48,7 +48,7 @@ const NotesCategory = ({ handleDownloadPdf, isGeneratingPdf }) => {
           className="w-full justify-center items-center flex-col sm:flex-row"
         >
           <button
-            className="flex items-center w-full h-full rounded-xl py-4 px-5 border-solid border-2 border-tertiary bg-transparent hover:border-primary"
+            className="flex items-center w-full h-full rounded-xl py-4 px-5 border-solid shadow border border-primary bg-transparent hover:border-primary"
             onClick={handleDownloadPdf}
             disabled={isGeneratingPdf}
           >
@@ -68,7 +68,7 @@ const NotesCategory = ({ handleDownloadPdf, isGeneratingPdf }) => {
               )}
 
               <Flex vertical className="text-left sm:text-center">
-                <Text strong>PDF</Text>
+                <Text className="text-primary" strong>PDF</Text>
                 <Text type="secondary leading-snug">
                   Convert text into a document.
                 </Text>
@@ -80,7 +80,7 @@ const NotesCategory = ({ handleDownloadPdf, isGeneratingPdf }) => {
             className="flex justify-center w-full h-full"
             onClick={handleSubscriptionModal}
           >
-            <button className="relative items-center w-full h-full rounded-xl py-4 px-5 border-solid border-2 border-tertiary bg-transparent hover:border-primary">
+            <button className="relative flex items-cent w-full h-full rounded-xl py-4 px-5 border-solid shadow border border-primary bg-transparent hover:border-primary">
               <Flex align="center" gap={15} className="flex-row sm:flex-col">
                 <SlDiamond className="absolute top-1 right-0 bg-primary text-white p-1 mr-2 text-2xl rounded-full" />
                 <img
@@ -89,7 +89,7 @@ const NotesCategory = ({ handleDownloadPdf, isGeneratingPdf }) => {
                   className="w-6 h-6 sm:w-9 sm:h-9"
                 />
                 <Flex vertical className="text-left sm:text-center">
-                  <Text strong>Audio</Text>
+                  <Text className="text-primary" strong>Audio</Text>
                   <Text type="secondary leading-snug">
                     Transform content into audio.
                   </Text>
@@ -102,7 +102,7 @@ const NotesCategory = ({ handleDownloadPdf, isGeneratingPdf }) => {
             className="flex justify-center w-full h-full"
             onClick={handleSubscriptionModal}
           >
-            <button className="relative items-center w-full h-full rounded-xl py-4 px-5 border-solid border-2 border-tertiary bg-transparent hover:border-primary">
+            <button className="relative flex items-cent w-full h-full rounded-xl py-4 px-5 border-solid shadow border border-primary bg-transparent hover:border-primary">
               <Flex align="center" gap={15} className="flex-row sm:flex-col">
                 <SlDiamond className="absolute top-1 right-0 bg-primary text-white p-1 mr-2 text-2xl rounded-full" />
                 <img
@@ -111,7 +111,7 @@ const NotesCategory = ({ handleDownloadPdf, isGeneratingPdf }) => {
                   className="w-6 h-6 sm:w-9 sm:h-9"
                 />
                 <Flex vertical className="text-left sm:text-center">
-                  <Text strong>Video</Text>
+                  <Text className="text-primary" strong>Video</Text>
                   <Text type="secondary leading-snug">
                     Turn text into interactive content.
                   </Text>
@@ -126,7 +126,8 @@ const NotesCategory = ({ handleDownloadPdf, isGeneratingPdf }) => {
         centered
         open={subscription}
         onOk={() => setSubscription(false)}
-        cancelButtonProps={{ style: { display: "none" } }}
+        cancelbutton
+        Props={{ style: { display: "none" } }}
         maskClosable={false}
         closable={false}
       >

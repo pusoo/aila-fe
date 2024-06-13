@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useWindowSize } from "../hooks/useWindowSize";
-import { Flex, Button, Modal, Drawer, Typography, Menu } from "antd";
+import { Flex, Button, Modal, Drawer, Typography, Menu, Tooltip } from "antd";
 import {
   FilePdfOutlined,
   VideoCameraOutlined,
@@ -57,15 +57,13 @@ function CreateNoteModal() {
   return (
     <>
       <Button
-        className="flex flex-1 items-center w-full h-full max-w-96 rounded-xl py-4 px-5 border-solid border-2 !bg-transparent border-tertiary hover:!border-[#359EDD] sm:w-full"
+        className="flex flex-1 items-center w-full h-full max-w-96 rounded-xl py-4 px-5 border border-primary !bg-transparent hover:!border-[#359EDD] sm:w-full shadow"
         onClick={showModal}
       >
-        <Flex gap={15}>
-          <FormOutlined className="text-primary text-xl" />
-          <Flex vertical className="text-left">
-            <Text strong>Create Note</Text>
-            <Text type="secondary">Start your notes on a blank page</Text>
-          </Flex>
+        <Flex vertical className="w-full justify-center items-center">
+          <Flex gap={8}><Text className="text-primary" strong>Create Note</Text>
+          <FormOutlined className="text-primary" /></Flex>
+          <Text type="secondary">Start your notes on a blank page</Text>
         </Flex>
       </Button>
       {screenWidth < 640 ? (
@@ -198,31 +196,33 @@ function CreateNoteModal() {
               <div className="flex justify-center gap-2">
                 {noteTypes.map(({ name, Icon }) => {
                   return (
-                    <Button
-                      key={name}
-                      style={{
-                        borderColor:
-                          name === selectedType
-                            ? "rgba(61, 142, 242, 0.992)"
-                            : "#8C8F92",
-                        display: "flex",
-                        alignItems: "center",
-                        padding: "3px 18px",
-                        height: "100%",
-                      }}
-                      onClick={() => setSelectedType(name)}
-                    >
-                      <span className="text-lg">
-                        <Icon
-                          style={{
-                            color:
-                              name === selectedType
-                                ? "rgba(61, 142, 242, 0.992)"
-                                : "#8C8F92",
-                          }}
-                        />
-                      </span>
-                    </Button>
+                    <Tooltip key={name} title={name} color={"#2db7f5"}>
+                      <Button
+                        key={name}
+                        style={{
+                          borderColor:
+                            name === selectedType
+                              ? "rgba(61, 142, 242, 0.992)"
+                              : "#8C8F92",
+                          display: "flex",
+                          alignItems: "center",
+                          padding: "3px 18px",
+                          height: "100%",
+                        }}
+                        onClick={() => setSelectedType(name)}
+                      >
+                        <span className="text-lg">
+                          <Icon
+                            style={{
+                              color:
+                                name === selectedType
+                                  ? "rgba(61, 142, 242, 0.992)"
+                                  : "#8C8F92",
+                            }}
+                          />
+                        </span>
+                      </Button>
+                    </Tooltip>
                   );
                 })}
               </div>

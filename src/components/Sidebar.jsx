@@ -21,6 +21,7 @@ const Sidebar = ({
         width={position === "bottom" ? "100%" : width}
         height={position === "bottom" ? "100%" : "unset"}
         closeIcon={null}
+        style={{padding: 0, margin: 0}}
       >
         {children}
       </Drawer>
@@ -28,10 +29,10 @@ const Sidebar = ({
   } else {
     return (
       <div
-        className="hidden sm:block flex-shrink-0 overflow-x-hidden transition-all rounded-lg my-5 mx-2.5"
+        className="hidden shadow sm:block flex-shrink-0 overflow-x-hidden transition-all rounded-lg my-5 mx-2.5"
         style={{
           width: showTab ? width : "0px",
-          border: showTab ? "2px solid #E5E9EA" : "0px",
+          border: showTab ? "1px solid #E5E9EA" : "0px",
           visibility: showTab ? "visible" : "invisible",
         }}
       >

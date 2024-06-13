@@ -1,12 +1,19 @@
-import { Card, Typography, Flex } from "antd";
+import { Card, Typography, Flex, Progress } from "antd";
+import { CloudOutlined } from "@ant-design/icons";
 import CreateNoteFolder from "./CreateNoteFolder";
 import useNoteContext from "../hooks/useNoteContext";
 
 const NoteSidebar = () => {
   const { notes, setSelectedNote, selectedNote } = useNoteContext();
 
+  const conicColors = {
+    "0%": "#4285F4",
+    "70%": "#FBBC05",
+    "100%": "#EA4335",
+  };
+
   return (notes || []).length > 0 ? (
-    <div className="sm:mt-5 sm:mx-5 p-0">
+    <div className="relative sm:mt-5 sm:mx-5 p-0 h-full">
       <CreateNoteFolder />
 
       <Flex vertical className="mt-5">
@@ -24,8 +31,8 @@ const NoteSidebar = () => {
               }}
               className={`rounded-lg  ${
                 selectedNote && note._id === selectedNote._id
-                  ? "bg-tertiary"
-                  : "bg-transparent"
+                  ? "bg-gray-100 hover:bg-gray-200"
+                  : "bg-transparent hover:bg-gray-200"
               }`}
               onClick={() => {
                 setSelectedNote(note);
@@ -37,6 +44,27 @@ const NoteSidebar = () => {
             </Card>
           );
         })}
+      </Flex>
+
+      <Flex
+        className="absolute bottom-5 bg-[#f9fdfe] py-3 w-full z-10"
+        vertical
+      >
+        <Flex gap={5}>
+          <CloudOutlined />
+          <p>Storage</p>
+        </Flex>
+        <Progress
+          percent={50}
+          // percentPosition={{
+          //   align: "center",
+          //   type: "outer",
+          // }}
+          size="small"
+          strokeColor={conicColors}
+          className="m-0"
+        />
+        <p>5 of 10 GB used</p>
       </Flex>
     </div>
   ) : (
