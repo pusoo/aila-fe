@@ -12,8 +12,8 @@ const NoteChatSidebar = ({ toggleTab }) => {
 
   return (
     selectedNote && (
-      <div className="flex flex-col pb-2 text-sm h-full bg-gray-100">
-        <div className="flex items-center justify-center sm:justify-start h-12 relative bg-white shadow">
+      <div className="flex flex-col pb-2 text-sm h-full bg-white sm:bg-gray-100">
+        <div className="flex items-center justify-center sm:justify-start h-12 relative bg-white shadow-none sm:shadow">
           <Typography.Title className="!mb-0 sm:pl-5 pl-0 !text-xl sm:!text-base">
             Chat
           </Typography.Title>

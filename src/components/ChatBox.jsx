@@ -267,7 +267,7 @@ function ChatBox({ note }) {
               (mutation && mutation.isPending) ||
               (dataMessages && dataMessages.isPending)
             }
-            className="absolute bottom-[0.375rem] sm:bottom-[1.0625rem] right-1 sm:right-4 rounded-lg border p-0.5 text-white transition-colors bg-transparent hover:!bg-transparent border-none"
+            className="absolute bottom-[0.100rem] sm:bottom-[1.1200rem] right-1 sm:right-4 rounded-lg border p-0.5 text-white transition-colors bg-transparent hover:!bg-transparent border-none"
             // style={{ background: 'transparent', border: 'none', padding: 0 }}
           />
         </Flex>

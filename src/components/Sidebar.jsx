@@ -21,6 +21,7 @@ const Sidebar = ({
         width={position === "bottom" ? "100%" : width}
         height={position === "bottom" ? "100%" : "unset"}
         closeIcon={null}
+        style={{padding: 0, margin: 0}}
       >
         {children}
       </Drawer>
