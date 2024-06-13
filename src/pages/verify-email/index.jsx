@@ -2,21 +2,23 @@ import { useMutation } from "@tanstack/react-query";
 import { Flex, message } from "antd";
 import axios from "axios";
 import { useEffect, } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, } from "react-router-dom";
 
 import { API_URL } from "../../config";
 import Robot from "../../assets/aila-icon.png";
 
 const VerifyEmailPage = () => {
-  const [searchParams] = useSearchParams();
-
+  const searchParams = new URLSearchParams(window.location.search);
   const token = searchParams.get('token');
 
   const mutation = useMutation({
     mutationFn: () => {
-      return axios.post(`${API_URL}/auth/verify-email?token=${token}`);
+      if (token) {
+        return axios.post(`${API_URL}/auth/verify-email?token=${token}`);
+      } else {
+        return Promise.resolve();
+      }
     },
-
   });
 
   useEffect(() => {
@@ -30,7 +32,6 @@ const VerifyEmailPage = () => {
       message.success("Your email is verified!");
     }
   }, [mutation.isSuccess, mutation.data]);
-
 
   return (
     <Flex
@@ -57,9 +58,11 @@ const VerifyEmailPage = () => {
           </Flex> : <p className="text-sm text-center">Verifying your email</p>
         }
       </div>
-
     </Flex>
   );
 };
 
 export default VerifyEmailPage;
+
+
+
