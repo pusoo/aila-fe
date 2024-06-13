@@ -30,8 +30,6 @@ export function NoteProvider({ children }) {
     },
   });
 
-
-  console.log({ me })
   useEffect(() => {
     if (Array.isArray(notes) && notes.length > 0 && !selectedNote) {
       setSelectedNote(notes[0]);
