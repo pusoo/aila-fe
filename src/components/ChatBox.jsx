@@ -6,7 +6,7 @@ import { SendOutlined } from "@ant-design/icons";
 import authAxios from "../api/authAxios";
 import { API_URL } from "../config";
 import aila from "../assets/aila-icon.png";
-import bubbles from "../assets/bubbles.svg";
+import messageIcon from "../assets/message.png";
 import { useSubscription } from "../hooks/SubscriptionContext";
 
 function ChatBox({ note }) {
@@ -127,13 +127,13 @@ function ChatBox({ note }) {
         >
           <Flex gap={16} className="flex-col overflow-y-scroll pb-5">
             {messages.length === 0 ? (
-              <Flex align="center" className="h-lvh justify-center opacity-30">
+              <Flex align="center" className="h-lvh justify-center">
                 <Empty
-                  image={bubbles}
+                  image={messageIcon}
                   description={
-                    <span className="text-xl sm:text-sm">
-                      No conversation yet. <br /> Start chatting with the
-                      chatbot <br /> by asking a question!
+                    <span className="text-sm text-gray-400">
+                      Start your conversation with AILA by <br /> asking a
+                      question!
                     </span>
                   }
                   imageStyle={{
@@ -142,7 +142,6 @@ function ChatBox({ note }) {
                     width: "60px",
                     maxHeight: "60px",
                     margin: "0 auto",
-                    opacity: ".5",
                   }}
                 />
               </Flex>
@@ -157,13 +156,13 @@ function ChatBox({ note }) {
                           <div className="w-7">
                             <img src={aila} />
                           </div>
-                          <div className="flex-1 rounded-b-xl rounded-r-xl bg-white p-3 shadow text-lg lg:text-sm">
+                          <div className="flex-1 rounded-b-xl rounded-r-xl bg-white p-3 shadow">
                             {message.message}
                           </div>
                         </Flex>
                       ) : (
                         <Flex className="justify-end">
-                          <div className="rounded-t-xl rounded-l-xl bg-primary p-3 text-white shadow text-lg lg:text-sm">
+                          <div className="rounded-t-xl rounded-l-xl bg-primary p-3 text-white shadow">
                             {message.message}
                           </div>
                         </Flex>
@@ -177,7 +176,7 @@ function ChatBox({ note }) {
                 <div className="w-7">
                   <img src={aila} />
                 </div>
-                <div className="rounded-xl bg-white shadow h-6 px-3 flex items-center w-12">
+                <div className="rounded-xl bg-white shadowh-6 px-3 flex items-center w-12">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
                     <circle
                       fill="#D3D3D3"
@@ -254,7 +253,7 @@ function ChatBox({ note }) {
       >
         <Flex>
           <Input
-            className="m-0 w-full resize-none border-2 border-tertiary text-xl sm:text-xs bg-transparent py-2 pl-3 pr-8 rounded-lg hover:border-primary hover:bg-transparent focus:border-primary focus:outline-none"
+            className="m-0 w-full resize-none text-sm py-2 pl-3 pr-8 rounded-lg border border-gray-300 hover:border-primary focus:border-primary"
             placeholder="Ask any question..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}

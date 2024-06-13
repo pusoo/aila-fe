@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import authAxios from "../api/authAxios";
 import { API_URL } from "../config";
-import { Button, Modal, Space, Table, message } from "antd";
+import { Button, Flex, Modal, Space, Table, message } from "antd";
 
 const Archive = () => {
   const queryClient = useQueryClient();
@@ -80,24 +80,24 @@ const Archive = () => {
       dataIndex: "action",
       key: "action",
       render: (_, record) => (
-        <Space size="middle">
-          <Button onClick={() => retrivedMutation.mutateAsync(record._id)}>
-            Retrieve
-          </Button>
-          <Button danger onClick={() => handleDelete(record._id)}>
-            Delete
-          </Button>
-        </Space>
+        <Flex className="flex flex-col sm:flex-row gap-2 sm:gap-5">
+            <Button onClick={() => retrivedMutation.mutateAsync(record._id)}>
+              Retrieve
+            </Button>
+            <Button danger onClick={() => handleDelete(record._id)}>
+              Delete
+            </Button>
+        </Flex>
       ),
     },
   ];
 
   return (
-    <div>
+    <div className="flex justify-center">
       <Table
         dataSource={notes}
         columns={columns}
-        className="py-5"
+        className="py-7 sm:w-10/12 w-full"
         rowKey="_id"
       />
     </div>

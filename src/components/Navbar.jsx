@@ -1,18 +1,9 @@
-import {
-  Flex,
-  Avatar,
-  Drawer,
-  Dropdown,
-  Layout,
-  Menu,
-  Space,
-  Modal,
-} from "antd";
-import { Link, useLocation, Navigate } from "react-router-dom";
+import { Flex, Avatar, Drawer, Dropdown, Layout, Menu, Modal } from "antd";
+import { Link, useLocation, Navigate, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 
-import logo from "../assets/aila-logo.svg";
+import logo from "../assets/logo.svg";
 import useNoteContext from "../hooks/useNoteContext";
 import {
   FolderOutlined,
@@ -24,15 +15,13 @@ import {
   SettingOutlined,
 } from "@ant-design/icons";
 import { SlDiamond } from "react-icons/sl";
+import { MdOutlinePrivacyTip } from "react-icons/md";
 import aila from "../assets/aila.svg";
 
 import authAxios from "../api/authAxios";
 import { TOKEN_KEY } from "../constants";
 import { API_URL } from "../config";
 import ProfilePage from "./Profile";
-import Archive from "./Archive";
-import History from "./History";
-
 const { Header } = Layout;
 
 const Navbar = () => {
@@ -43,9 +32,10 @@ const Navbar = () => {
   const [isSettingsContentDrawerOpen, setIsSettingsContentDrawerOpen] =
     useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedKey, setSelectedKey] = useState("1");
 
-  const showSettingsModal = () => {
+  const navigate = useNavigate();
+
+  const showProfileModal = () => {
     setIsModalOpen(true);
   };
   const handleOk = () => {
@@ -55,39 +45,8 @@ const Navbar = () => {
     setIsModalOpen(false);
   };
 
-  const handleMenuClick = (e) => {
-    setSelectedKey(e.key);
-  };
-
-  const handleSettingsClick = (e) => {
+  const handleSettingsClick = () => {
     setIsSettingsContentDrawerOpen(true);
-    setSelectedKey(e.key);
-  };
-
-  const renderContent = () => {
-    switch (selectedKey) {
-      case "1":
-        return <ProfilePage />;
-      case "2":
-        return <Archive />;
-      case "3":
-        return <History />;
-      default:
-        return null;
-    }
-  };
-
-  const renderSettingsContent = () => {
-    switch (selectedKey) {
-      case "1":
-        return <ProfilePage />;
-      case "2":
-        return <Archive />;
-      case "3":
-        return <History />;
-      default:
-        return null;
-    }
   };
 
   const tokensString = localStorage.getItem(TOKEN_KEY);
@@ -121,29 +80,18 @@ const Navbar = () => {
   const items = [
     {
       key: "1",
-      label: <span onClick={showSettingsModal}>Settings</span>,
+      label: "Profile",
+      onClick: showProfileModal,
     },
     {
       key: "2",
-      label: <span onClick={handleLogout}>Logout</span>,
-    },
-  ];
-
-  const settingsItems = [
-    {
-      key: "1",
-      label: <span>Profile</span>,
-      icon: <UserOutlined />,
-    },
-    {
-      key: "2",
-      label: <span>Archived</span>,
-      icon: <InboxOutlined />,
+      label: "Terms & policies",
+      onClick: () => navigate("/policies"),
     },
     {
       key: "3",
-      label: <span>History</span>,
-      icon: <HistoryOutlined />,
+      label: "Logout",
+      onClick: handleLogout,
     },
   ];
 
@@ -155,15 +103,22 @@ const Navbar = () => {
     return (
       <>
         <div className="hidden sm:block drop-shadow-sm">
-          <Header className="flex items-center justify-between bg-white pl-16 pr-5">
-            <div className="logo bg-white mr-5">
+          <Header className="flex items-center justify-between bg-quaternary px-5 shadow">
+            <div className="logo mr-5">
               <Link to="/notes" className="flex items-center justify-center">
                 <img src={logo} />
               </Link>
             </div>
-            <Menu mode="horizontal" className="flex-1 text-right justify-end">
+            <Menu
+              mode="horizontal"
+              className="flex-1 text-right justify-end bg-transparent"
+            >
               <Menu.Item key="1">
-                <Link to="/projects" className="flex items-center">
+                <Link
+                  to="/projects"
+                  className="flex items-center"
+                  style={{ color: "white" }}
+                >
                   <FolderOutlined
                     className="text-primary mr-2"
                     style={{ fontSize: "16px" }}
@@ -172,7 +127,11 @@ const Navbar = () => {
                 </Link>
               </Menu.Item>
               <Menu.Item key="2">
-                <Link to="/pricing" className="flex items-center">
+                <Link
+                  to="/pricing"
+                  className="flex items-center"
+                  style={{ color: "white" }}
+                >
                   <SlDiamond
                     className="text-primary mr-2"
                     style={{ fontSize: "12px" }}
@@ -182,11 +141,10 @@ const Navbar = () => {
               </Menu.Item>
               <Menu.Item key="3">
                 <Dropdown menu={{ items }}>
-                  <Space>
-                    <a>
-                      <Avatar icon={<UserOutlined />} />
-                    </a>
-                  </Space>
+                  <Avatar
+                    className="bg-white"
+                    icon={<UserOutlined className="text-primary" />}
+                  />
                 </Dropdown>
               </Menu.Item>
             </Menu>
@@ -197,13 +155,13 @@ const Navbar = () => {
           <Header
             className={`flex items-center px-8 ${
               hasNotes ? "justify-end" : "justify-center"
-            } bg-background`}
+            } bg-quaternary`}
           >
             {hasNotes ? (
-              <div className="w-[50vw] flex justify-between items-center">
-                <img src={aila} className="w-20 text-center aspect-square" />
+              <div className="w-[53vw] flex justify-between items-center">
+                <img src={aila} className="w-20 text-center" />
                 <UnorderedListOutlined
-                  className="text-xl cursor-pointer"
+                  className="text-xl cursor-pointer text-white"
                   onClick={() => {
                     setIsDrawerOpen(true);
                   }}
@@ -211,9 +169,9 @@ const Navbar = () => {
               </div>
             ) : (
               <div className="flex justify-center items-center">
-                <img src={aila} className="w-20 text-center aspect-square" />
+                <img src={aila} className="w-20 text-center" />
                 <UnorderedListOutlined
-                  className="absolute right-7 text-xl cursor-pointer"
+                  className="absolute right-7 text-xl cursor-pointer text-white"
                   onClick={() => {
                     setIsDrawerOpen(true);
                   }}
@@ -232,7 +190,12 @@ const Navbar = () => {
           className="rounded-t-2xl"
         >
           <Menu mode="vertical" className="flex flex-col text-lg">
-            <Menu.Item key="1" style={{}}>
+            <Menu.Item
+              key="1"
+              style={{
+                display: "flex",
+              }}
+            >
               <Link to="/projects">
                 <FolderOutlined
                   className="text-primary mr-2"
@@ -271,7 +234,14 @@ const Navbar = () => {
               />
               Settings
             </Menu.Item>
-            <Menu.Item key="4" style={{}} onClick={handleLogout}>
+            <Menu.Item key="4" onClick={() => navigate("/policies")}>
+              <MdOutlinePrivacyTip
+                className="text-primary mr-2"
+                style={{ fontSize: "24px" }}
+              />
+              Terms & policies
+            </Menu.Item>
+            <Menu.Item key="5" style={{}} onClick={handleLogout}>
               <LogoutOutlined
                 className="text-primary mr-2"
                 style={{ fontSize: "24px" }}
@@ -283,26 +253,15 @@ const Navbar = () => {
 
         {/* Settings modal */}
         <Modal
-          title="Settings"
+          title="Profile"
           open={isModalOpen}
           onOk={handleOk}
           onCancel={handleCancel}
           footer={null}
-          width={700}
+          width={500}
         >
-          <Flex>
-            <Menu
-              style={{
-                width: 145,
-              }}
-              defaultSelectedKeys={["1"]}
-              mode="inline"
-              items={settingsItems}
-              onClick={handleMenuClick}
-            />
-            <Flex className="w-full justify-center items-center p-5">
-              {renderContent()}
-            </Flex>
+          <Flex className="justify-center items-center p-7">
+            <ProfilePage />
           </Flex>
         </Modal>
 
@@ -362,7 +321,7 @@ const Navbar = () => {
           onClose={() => setIsSettingsContentDrawerOpen(false)}
           height="100%"
         >
-          {renderSettingsContent()}
+          <ProfilePage />{" "}
         </Drawer>
       </>
     );

@@ -32,46 +32,50 @@ const History = () => {
   };
 
   return (
-    <Flex className="w-full" vertical>
-      <Title type="secondary" level={5}>
-        Search History
-      </Title>
-      <Flex className="justify-between">
-        <Input
-          size="medium"
-          placeholder="Type a keyword"
-          prefix={<SearchOutlined className="text-gray-400" />}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="mb-5 w-fit rounded-full"
-        />
-        <Button
-          type="primary"
-          danger
-          onClick={handleDeleteHistoryBelow}
-          className="mb-3"
-        >
-          Delete history below
-        </Button>
-      </Flex>
-      <List
-        bordered
-        dataSource={filteredNotes}
-        renderItem={(note) => (
-          <List.Item
-            onClick={() => handleNoteClick(note)}
-            className={`cursor-pointer ${
-              selectedNote && selectedNote._id === note._id ? "selected" : ""
-            }`}
+    <Flex className="justify-center py-7">
+      <Flex className="w-10/12" vertical>
+        <Title type="secondary" level={5}>
+          Search History
+        </Title>
+        <Flex className="flex flex-col sm:flex-row justify-center sm:justify-between items-center mt-3">
+          <Input
+            size="medium"
+            placeholder="Type a keyword"
+            prefix={<SearchOutlined className="text-gray-400" />}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="mb-5 w-fit rounded-full"
+          />
+          <Button
+            type="primary"
+            danger
+            onClick={handleDeleteHistoryBelow}
+            className="mb-3"
           >
-            {accessHistory[note._id] && (
-              <span>{new Date(accessHistory[note._id]).toLocaleString()}</span>
-            )}
-            <CaretRightOutlined className=" text-gray-300 mx-2" />
-            {note.title}
-          </List.Item>
-        )}
-      />
+            Delete history below
+          </Button>
+        </Flex>
+        <List
+          bordered
+          dataSource={filteredNotes}
+          renderItem={(note) => (
+            <List.Item
+              onClick={() => handleNoteClick(note)}
+              className={`cursor-pointer ${
+                selectedNote && selectedNote._id === note._id ? "selected" : ""
+              }`}
+            >
+              {accessHistory[note._id] && (
+                <span>
+                  {new Date(accessHistory[note._id]).toLocaleString()}
+                </span>
+              )}
+              <CaretRightOutlined className=" text-gray-300 mx-2" />
+              {note.title}
+            </List.Item>
+          )}
+        />
+      </Flex>
     </Flex>
   );
 };

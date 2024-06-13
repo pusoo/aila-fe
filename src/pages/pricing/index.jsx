@@ -39,16 +39,17 @@ const Pricing = () => {
 
   return (
     <>
-      <Header className="sticky top-0 z-10 flex items-center justify-center bg-white drop-shadow-sm">
-        <div className="logo absolute left-8 bg-white mr-5 flex items-center">
+      <Header className="sticky top-0 z-10 flex items-center justify-center bg-quaternary shadow">
+        <div className="logo absolute left-8 mr-5 flex items-center">
           <Button
             icon={<ArrowLeftOutlined />}
             onClick={() => {
               navigate("/notes");
             }}
+            className="border-none"
           ></Button>
         </div>
-        <Title level={4}>Pricing</Title>
+        <Title level={4} style={{color: "white"}}>Pricing</Title>
       </Header>
       <div className="flex flex-col justify-center items-center gap-7 py-8 px-4 mx-auto max-w-screen-xl lg:py-[1.375rem] lg:px-12">
         <Segmented

@@ -9,7 +9,7 @@ import authAxios from "../api/authAxios";
 import { API_URL } from "../config";
 
 const { Title } = Typography;
-const ProfilePage = () => {
+const   ProfilePage = () => {
   const { data: profile } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => {

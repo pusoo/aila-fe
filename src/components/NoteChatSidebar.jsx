@@ -12,11 +12,9 @@ const NoteChatSidebar = ({ toggleTab }) => {
 
   return (
     selectedNote && (
-      <div className="flex flex-col gap-2 pb-2 text-sm h-full">
-        <div className="flex items-center justify-center sm:justify-start !h-[50px] relative">
-          <Typography.Title
-            className="!mb-0 pl-5 sm:level-3 !text-2xl sm:!text-base"
-          >
+      <div className="flex flex-col pb-2 text-sm h-full bg-gray-100">
+        <div className="flex items-center justify-center sm:justify-start h-12 relative bg-white shadow">
+          <Typography.Title className="!mb-0 sm:pl-5 pl-0 !text-xl sm:!text-base">
             Chat
           </Typography.Title>
 
@@ -31,7 +29,7 @@ const NoteChatSidebar = ({ toggleTab }) => {
           className="flex-1"
           style={{
             width: isMobile ? "100%" : "280px",
-            padding: isMobile ? "0px" : "16px",
+            padding: isMobile ? "0px" : "0 16px 16px 16px",
             height: "100%",
             flexShrink: 0,
             position: "relative",
