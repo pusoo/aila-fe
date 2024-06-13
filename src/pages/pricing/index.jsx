@@ -166,13 +166,13 @@ const Pricing = () => {
                 </p>
                 <p>&nbsp;</p>
                 <div className="flex items-baseline my-3">
-                  <span className="mr-2 text-3xl font-bold">₱150</span>
+                  <span className="mr-2 text-3xl font-bold">₱160</span>
                   <span>/month</span>
                 </div>
                 <Button
                   className="text-white hover:!text-white bg-primary hover:!bg-[#4aa3e8] font-medium rounded-md text-sm px-5 py-2.5 text-center mt-4 h-11"
                   onClick={() =>
-                    subscribedPlan !== "basic" && showModal("basic", "150")
+                    subscribedPlan !== "basic" && showModal("basic", "160")
                   }
                   disabled={subscribedPlan === "basic"}
                 >
@@ -259,13 +259,13 @@ const Pricing = () => {
                   study.
                 </p>
                 <div className="flex items-baseline my-3">
-                  <span className="mr-2 text-3xl font-bold">₱300</span>
+                  <span className="mr-2 text-3xl font-bold">₱310</span>
                   <span>/month</span>
                 </div>
                 <Button
                   className="text-white hover:!text-white bg-primary hover:!bg-[#4aa3e8] font-medium rounded-md text-sm px-5 py-2.5 text-center mt-4 h-11"
                   onClick={() =>
-                    subscribedPlan !== "premium" && showModal("premium", "300")
+                    subscribedPlan !== "premium" && showModal("premium", "310")
                   }
                   disabled={subscribedPlan === "premium"}
                 >
@@ -357,13 +357,13 @@ const Pricing = () => {
                   Perfect for casual learners exploring various topics
                 </p>
                 <div className="flex items-baseline my-3">
-                  <span className="mr-2 text-3xl font-bold">₱100</span>
+                  <span className="mr-2 text-3xl font-bold">₱110</span>
                   <span>/week</span>
                 </div>
                 <Button
                   className="text-white hover:!text-white bg-primary hover:!bg-[#4aa3e8] font-medium rounded-md text-sm px-5 py-2.5 text-center mt-4 h-11"
                   onClick={() =>
-                    subscribedPlan !== "weekly" && showModal("weekly", "100")
+                    subscribedPlan !== "weekly" && showModal("weekly", "110")
                   }
                   disabled={subscribedPlan === "weekly"}
                 >
@@ -449,14 +449,14 @@ const Pricing = () => {
                   Perfect for learners engaging research or study
                 </p>
                 <div className="flex items-baseline my-3">
-                  <span className="mr-2 text-3xl font-bold">₱50</span>
+                  <span className="mr-2 text-3xl font-bold">₱60</span>
                   <span>/day</span>
                 </div>
                 <Button
                   className="text-white hover:!text-white bg-primary hover:!bg-[#4aa3e8] font-medium rounded-md text-sm px-5 py-2.5 text-center mt-4 h-11"
                   onClick={() =>
                     subscribedPlan !== "daily pass" &&
-                    showModal("daily pass", "50")
+                    showModal("daily pass", "60")
                   }
                   disabled={subscribedPlan === "daily pass"}
                 >
